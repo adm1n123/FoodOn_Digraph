@@ -259,6 +259,38 @@ class Scoring:
 
         return TP/(TP+FP)
 
+
+    def find_avg_path_length(self):
+        length = 0
+        count = 0
+        max_len = 0
+        for entity in self.non_seeds:
+            parent = entity.parents[0]
+            pred_parent = entity.predicted_class
+            if pred_parent is None:
+                continue
+            path_p = []
+            path_pred = []
+            node = parent
+            while node.parents[0] != self.root:
+                path_p.append(node)
+                node = node.parents[0]
+
+            node = pred_parent
+            while node.parents[0] != self.root:
+                path_pred.append(node)
+                node = node.parents[0]
+
+            unique = set(path_p) - set(path_pred)
+            length += len(unique)
+            count += 1
+
+            if length > max_len:
+                max_len = length
+
+        print(f' Average path length between actual and predicted class: {length/count}, for {count} entities, max_length: {max_len}')
+
+
     def detect_cycle(self, root):
         for child in root.children:
             self.detect_cycle(child)
