@@ -74,22 +74,29 @@ class Scoring:
 
     def run_config(self):
         t1 = time()
+        prec = []
         print('Running config ...')
-        self.reset_nodes()
-        for alpha in [x*.1 for x in range(0, 10)]:
-            for beta in [x*.1 for x in range(0, 10)]:
+
+        for alpha in [x*.1 for x in range(4, 8)]:
+            for beta in [x*.1 for x in range(4, 8)]:
+                self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
 
                 self.precompute_tree_nodes()
                 self.predict_entity()
 
-                prec = self.calculate_precision()
+                p = self.calculate_precision()
                 self.find_avg_path_length()
-
-                print(f'alpha: {alpha}, beta: {beta}, prec: {prec}')
+                prec.append([alpha, beta, p])
+                print(f'alpha: {alpha}, beta: {beta}, prec: {p}')
         t2 = time()
         print('Elapsed time for running config search %.2f minutes', (t2 - t1) / 60)
+        prec.sort(key=lambda x: x[2], reverse=True)
+        for p in prec:
+            print(f'alpha: {p[0]}, beta: {p[1]}, precision: {p[2]}')
+
+        return None
 
 
 
@@ -97,7 +104,6 @@ class Scoring:
 
     def precompute_tree_nodes(self):
         print(f'Root is: {self.root.ID}')
-        self.root.parents = ['Admin']
         self.post_order_traversal(self.root, depth=0)
         return None
 
@@ -135,11 +141,13 @@ class Scoring:
 
     def traverse(self, root, entity):
         root.backtrack = True
-        root.score = self._cosine_similarity(self.root.Sc, entity.Le)   # score of class with current entity used for traversal only.
+        root.score = self._cosine_similarity(root.Sc, entity.Le)   # score of class with current entity used for traversal only.
+
+        if root.score > entity.score:  # compare with any previous class scores
+            entity.score = root.score
+            entity.predicted_class = root
+
         if len(root.children) == 0:
-            if root.score > entity.score:   # compare with any previous class scores
-                entity.score = root.score
-                entity.predicted_class = root
             return None
 
         child_scores = []
@@ -255,7 +263,7 @@ class Scoring:
                 TP += 1
             else:
                 FP += 1
-        print(f'Precision is: {TP/(TP+FP)}')
+        print(f'Precision is: {TP/(TP+FP)}, TP: {TP}, TP+FP:{TP+FP}')
 
         return TP/(TP+FP)
 
@@ -272,21 +280,21 @@ class Scoring:
             path_p = []
             path_pred = []
             node = parent
-            while node.parents[0] != self.root:
+            while node != self.root:
                 path_p.append(node)
                 node = node.parents[0]
 
             node = pred_parent
-            while node.parents[0] != self.root:
+            while node != self.root:
                 path_pred.append(node)
                 node = node.parents[0]
 
             unique = set(path_p) - set(path_pred)
-            length += len(unique)
+            length += len(unique) + 1   # +1 for LCA
             count += 1
 
-            if length > max_len:
-                max_len = length
+            if len(unique) + 1 > max_len:
+                max_len = len(unique) + 1
 
         print(f' Average path length between actual and predicted class: {length/count}, for {count} entities, max_length: {max_len}')
 

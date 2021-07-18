@@ -5,423 +5,110 @@ Found %d classes. 2765
 Found %d entities. 10897
 Generating Digraph
 Seeding digraph.
-Found 7766 non-seed entities to populate out of 10897 all entities.
+Found 7769 non-seed entities to populate out of 10897 all entities.
 Loading word2vec...
-Elapsed time %.2f minutes 1.0975594520568848
+Elapsed time %.2f minutes 0.9763147870699564
 Phrase detection skipped
-Elapsed time for getting class label vectors %.2f minutes 0.15384240945180258
+Elapsed time for getting class label vectors %.2f minutes 0.13398830890655516
 Phrase detection skipped
-Elapsed time for getting entity label vectors %.2f minutes 0.4364407698313395
+Elapsed time for getting entity label vectors %.2f minutes 0.38579559326171875
 Running config ...
 Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 1457
-Precision is: 0.04278697001034126
-alpha: 0.0, beta: 0.0, prec: 0.04278697001034126
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 898
-Precision is: 0.037099276111685627
-alpha: 0.0, beta: 0.1, prec: 0.037099276111685627
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 555
-Precision is: 0.03270423991726991
-alpha: 0.0, beta: 0.2, prec: 0.03270423991726991
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 361
-Precision is: 0.028179937952430196
-alpha: 0.0, beta: 0.30000000000000004, prec: 0.028179937952430196
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 248
-Precision is: 0.023526370217166494
-alpha: 0.0, beta: 0.4, prec: 0.023526370217166494
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 202
-Precision is: 0.020811789038262668
-alpha: 0.0, beta: 0.5, prec: 0.020811789038262668
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 169
-Precision is: 0.017580144777662874
-alpha: 0.0, beta: 0.6000000000000001, prec: 0.017580144777662874
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 143
-Precision is: 0.01421923474663909
-alpha: 0.0, beta: 0.7000000000000001, prec: 0.01421923474663909
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 122
-Precision is: 0.012150982419855223
-alpha: 0.0, beta: 0.8, prec: 0.012150982419855223
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 103
-Precision is: 0.011375387797311272
-alpha: 0.0, beta: 0.9, prec: 0.011375387797311272
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 96
-Precision is: 0.045501551189245086
-alpha: 0.1, beta: 0.0, prec: 0.045501551189245086
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 95
-Precision is: 0.03813340227507756
-alpha: 0.1, beta: 0.1, prec: 0.03813340227507756
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 94
-Precision is: 0.03464322647362978
-alpha: 0.1, beta: 0.2, prec: 0.03464322647362978
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 92
-Precision is: 0.029601861427094107
-alpha: 0.1, beta: 0.30000000000000004, prec: 0.029601861427094107
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 89
-Precision is: 0.025206825232678386
-alpha: 0.1, beta: 0.4, prec: 0.025206825232678386
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 89
-Precision is: 0.021845915201654603
-alpha: 0.1, beta: 0.5, prec: 0.021845915201654603
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 88
-Precision is: 0.01809720785935884
-alpha: 0.1, beta: 0.6000000000000001, prec: 0.01809720785935884
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 88
-Precision is: 0.016546018614270942
-alpha: 0.1, beta: 0.7000000000000001, prec: 0.016546018614270942
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 88
-Precision is: 0.013572905894519132
-alpha: 0.1, beta: 0.8, prec: 0.013572905894519132
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 87
-Precision is: 0.012668045501551189
-alpha: 0.1, beta: 0.9, prec: 0.012668045501551189
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 85
-Precision is: 0.04446742502585315
-alpha: 0.2, beta: 0.0, prec: 0.04446742502585315
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 84
-Precision is: 0.039555325749741466
-alpha: 0.2, beta: 0.1, prec: 0.039555325749741466
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 84
-Precision is: 0.03477249224405377
-alpha: 0.2, beta: 0.2, prec: 0.03477249224405377
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 84
-Precision is: 0.02998965873836608
-alpha: 0.2, beta: 0.30000000000000004, prec: 0.02998965873836608
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 82
-Precision is: 0.026370217166494313
-alpha: 0.2, beta: 0.4, prec: 0.026370217166494313
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 82
-Precision is: 0.022880041365046535
-alpha: 0.2, beta: 0.5, prec: 0.022880041365046535
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 80
-Precision is: 0.018872802481902793
-alpha: 0.2, beta: 0.6000000000000001, prec: 0.018872802481902793
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 80
-Precision is: 0.01732161323681489
-alpha: 0.2, beta: 0.7000000000000001, prec: 0.01732161323681489
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 76
-Precision is: 0.014089968976215098
-alpha: 0.2, beta: 0.8, prec: 0.014089968976215098
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 76
-Precision is: 0.012668045501551189
-alpha: 0.2, beta: 0.9, prec: 0.012668045501551189
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 71
-Precision is: 0.046018614270941054
-alpha: 0.30000000000000004, beta: 0.0, prec: 0.046018614270941054
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 71
-Precision is: 0.039555325749741466
-alpha: 0.30000000000000004, beta: 0.1, prec: 0.039555325749741466
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 71
-Precision is: 0.03386763185108583
-alpha: 0.30000000000000004, beta: 0.2, prec: 0.03386763185108583
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 71
-Precision is: 0.02921406411582213
-alpha: 0.30000000000000004, beta: 0.30000000000000004, prec: 0.02921406411582213
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 71
-Precision is: 0.027145811789038264
-alpha: 0.30000000000000004, beta: 0.4, prec: 0.027145811789038264
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 71
-Precision is: 0.025336091003102378
-alpha: 0.30000000000000004, beta: 0.5, prec: 0.025336091003102378
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 70
-Precision is: 0.02094105480868666
-alpha: 0.30000000000000004, beta: 0.6000000000000001, prec: 0.02094105480868666
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 69
-Precision is: 0.0187435367114788
-alpha: 0.30000000000000004, beta: 0.7000000000000001, prec: 0.0187435367114788
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 67
-Precision is: 0.015124095139607031
-alpha: 0.30000000000000004, beta: 0.8, prec: 0.015124095139607031
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 67
-Precision is: 0.013960703205791106
-alpha: 0.30000000000000004, beta: 0.9, prec: 0.013960703205791106
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 60
-Precision is: 0.046147880041365046
-alpha: 0.4, beta: 0.0, prec: 0.046147880041365046
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 59
-Precision is: 0.03852119958634954
-alpha: 0.4, beta: 0.1, prec: 0.03852119958634954
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 58
-Precision is: 0.03360910031023785
-alpha: 0.4, beta: 0.2, prec: 0.03360910031023785
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 58
-Precision is: 0.030248190279214063
-alpha: 0.4, beta: 0.30000000000000004, prec: 0.030248190279214063
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 55
-Precision is: 0.027533609100310236
-alpha: 0.4, beta: 0.4, prec: 0.027533609100310236
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 55
-Precision is: 0.02456049638055843
-alpha: 0.4, beta: 0.5, prec: 0.02456049638055843
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 55
-Precision is: 0.02262150982419855
-alpha: 0.4, beta: 0.6000000000000001, prec: 0.02262150982419855
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 55
-Precision is: 0.019777662874870733
-alpha: 0.4, beta: 0.7000000000000001, prec: 0.019777662874870733
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 54
-Precision is: 0.01628748707342296
-alpha: 0.4, beta: 0.8, prec: 0.01628748707342296
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 53
-Precision is: 0.014089968976215098
-alpha: 0.4, beta: 0.9, prec: 0.014089968976215098
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 49
-Precision is: 0.0438210961737332
-alpha: 0.5, beta: 0.0, prec: 0.0438210961737332
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 48
-Precision is: 0.037745604963805586
-alpha: 0.5, beta: 0.1, prec: 0.037745604963805586
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 47
-Precision is: 0.03192864529472596
-alpha: 0.5, beta: 0.2, prec: 0.03192864529472596
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 45
-Precision is: 0.029472595656670115
-alpha: 0.5, beta: 0.30000000000000004, prec: 0.029472595656670115
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 45
-Precision is: 0.02546535677352637
-alpha: 0.5, beta: 0.4, prec: 0.02546535677352637
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 43
-Precision is: 0.022880041365046535
-alpha: 0.5, beta: 0.5, prec: 0.022880041365046535
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 42
-Precision is: 0.021070320579110652
-alpha: 0.5, beta: 0.6000000000000001, prec: 0.021070320579110652
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 42
-Precision is: 0.018355739400206825
-alpha: 0.5, beta: 0.7000000000000001, prec: 0.018355739400206825
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 39
-Precision is: 0.016028955532574975
-alpha: 0.5, beta: 0.8, prec: 0.016028955532574975
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 39
-Precision is: 0.013572905894519132
-alpha: 0.5, beta: 0.9, prec: 0.013572905894519132
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 35
-Precision is: 0.04136504653567735
-alpha: 0.6000000000000001, beta: 0.0, prec: 0.04136504653567735
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 35
-Precision is: 0.0359358841778697
-alpha: 0.6000000000000001, beta: 0.1, prec: 0.0359358841778697
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 34
-Precision is: 0.02998965873836608
-alpha: 0.6000000000000001, beta: 0.2, prec: 0.02998965873836608
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 34
-Precision is: 0.026499482936918305
-alpha: 0.6000000000000001, beta: 0.30000000000000004, prec: 0.026499482936918305
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 34
-Precision is: 0.02326783867631851
-alpha: 0.6000000000000001, beta: 0.4, prec: 0.02326783867631851
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 33
-Precision is: 0.02016546018614271
-alpha: 0.6000000000000001, beta: 0.5, prec: 0.02016546018614271
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 30
-Precision is: 0.01732161323681489
-alpha: 0.6000000000000001, beta: 0.6000000000000001, prec: 0.01732161323681489
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 28
-Precision is: 0.015253360910031023
-alpha: 0.6000000000000001, beta: 0.7000000000000001, prec: 0.015253360910031023
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 25
-Precision is: 0.013185108583247156
-alpha: 0.6000000000000001, beta: 0.8, prec: 0.013185108583247156
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 24
-Precision is: 0.011375387797311272
-alpha: 0.6000000000000001, beta: 0.9, prec: 0.011375387797311272
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 24
-Precision is: 0.038262668045501554
-alpha: 0.7000000000000001, beta: 0.0, prec: 0.038262668045501554
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 24
-Precision is: 0.03257497414684592
-alpha: 0.7000000000000001, beta: 0.1, prec: 0.03257497414684592
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 24
-Precision is: 0.028179937952430196
-alpha: 0.7000000000000001, beta: 0.2, prec: 0.028179937952430196
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 24
-Precision is: 0.023784901758014478
-alpha: 0.7000000000000001, beta: 0.30000000000000004, prec: 0.023784901758014478
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 24
-Precision is: 0.019906928645294725
-alpha: 0.7000000000000001, beta: 0.4, prec: 0.019906928645294725
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 22
-Precision is: 0.01796794208893485
-alpha: 0.7000000000000001, beta: 0.5, prec: 0.01796794208893485
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 18
-Precision is: 0.015641158221303
-alpha: 0.7000000000000001, beta: 0.6000000000000001, prec: 0.015641158221303
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 15
-Precision is: 0.013831437435367114
-alpha: 0.7000000000000001, beta: 0.7000000000000001, prec: 0.013831437435367114
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 14
-Precision is: 0.01124612202688728
-alpha: 0.7000000000000001, beta: 0.8, prec: 0.01124612202688728
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 12
-Precision is: 0.010599793174767322
-alpha: 0.7000000000000001, beta: 0.9, prec: 0.010599793174767322
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 12
-Precision is: 0.03580661840744571
-alpha: 0.8, beta: 0.0, prec: 0.03580661840744571
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 12
-Precision is: 0.030248190279214063
-alpha: 0.8, beta: 0.1, prec: 0.030248190279214063
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 12
-Precision is: 0.02546535677352637
-alpha: 0.8, beta: 0.2, prec: 0.02546535677352637
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 11
-Precision is: 0.021070320579110652
-alpha: 0.8, beta: 0.30000000000000004, prec: 0.021070320579110652
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 11
-Precision is: 0.017709410548086866
-alpha: 0.8, beta: 0.4, prec: 0.017709410548086866
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 11
-Precision is: 0.015253360910031023
-alpha: 0.8, beta: 0.5, prec: 0.015253360910031023
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 11
-Precision is: 0.012926577042399173
-alpha: 0.8, beta: 0.6000000000000001, prec: 0.012926577042399173
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 9
-Precision is: 0.012021716649431231
-alpha: 0.8, beta: 0.7000000000000001, prec: 0.012021716649431231
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 9
-Precision is: 0.010599793174767322
-alpha: 0.8, beta: 0.8, prec: 0.010599793174767322
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 8
-Precision is: 0.010858324715615306
-alpha: 0.8, beta: 0.9, prec: 0.010858324715615306
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.03270423991726991
-alpha: 0.9, beta: 0.0, prec: 0.03270423991726991
-
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.028697001034126163
-alpha: 0.9, beta: 0.1, prec: 0.028697001034126163
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.022233712512926575
-alpha: 0.9, beta: 0.2, prec: 0.022233712512926575
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.017709410548086866
-alpha: 0.9, beta: 0.30000000000000004, prec: 0.017709410548086866
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.015124095139607031
-alpha: 0.9, beta: 0.4, prec: 0.015124095139607031
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.013831437435367114
-alpha: 0.9, beta: 0.5, prec: 0.013831437435367114
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.011892450879007239
-alpha: 0.9, beta: 0.6000000000000001, prec: 0.011892450879007239
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 7
-Precision is: 0.010858324715615306
-alpha: 0.9, beta: 0.7000000000000001, prec: 0.010858324715615306
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 6
-Precision is: 0.010082730093071354
-alpha: 0.9, beta: 0.8, prec: 0.010082730093071354
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 5
-Precision is: 0.009177869700103413
-alpha: 0.9, beta: 0.9, prec: 0.009177869700103413
-Elapsed time %.2f minutes 43.768049816290535
+Failed entities to map 0
+Precision is: 0.045225481328336994, TP: 350, TP+FP:7739
+ Average path length between actual and predicted class: 5.308920066932681, for 7769 entities, max_length: 11
+alpha: 0.4, beta: 0.4, prec: 0.045225481328336994
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.036826463367360125, TP: 285, TP+FP:7739
+ Average path length between actual and predicted class: 5.363238512035011, for 7769 entities, max_length: 11
+alpha: 0.4, beta: 0.5, prec: 0.036826463367360125
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.03217469957358832, TP: 249, TP+FP:7739
+ Average path length between actual and predicted class: 5.393486935255503, for 7769 entities, max_length: 11
+alpha: 0.4, beta: 0.6000000000000001, prec: 0.03217469957358832
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.028039798423568938, TP: 217, TP+FP:7739
+ Average path length between actual and predicted class: 5.429913759814648, for 7769 entities, max_length: 11
+alpha: 0.4, beta: 0.7000000000000001, prec: 0.028039798423568938
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.046776069259594266, TP: 362, TP+FP:7739
+ Average path length between actual and predicted class: 5.293602780280603, for 7769 entities, max_length: 11
+alpha: 0.5, beta: 0.4, prec: 0.046776069259594266
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.03966920790799845, TP: 307, TP+FP:7739
+ Average path length between actual and predicted class: 5.343802291157163, for 7769 entities, max_length: 11
+alpha: 0.5, beta: 0.5, prec: 0.03966920790799845
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.03191626825171211, TP: 247, TP+FP:7739
+ Average path length between actual and predicted class: 5.386793667138628, for 7769 entities, max_length: 11
+alpha: 0.5, beta: 0.6000000000000001, prec: 0.03191626825171211
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.028169014084507043, TP: 218, TP+FP:7739
+ Average path length between actual and predicted class: 5.4089329386021365, for 7769 entities, max_length: 11
+alpha: 0.5, beta: 0.7000000000000001, prec: 0.028169014084507043
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.045871559633027525, TP: 355, TP+FP:7739
+ Average path length between actual and predicted class: 5.291929463251384, for 7769 entities, max_length: 11
+alpha: 0.6000000000000001, beta: 0.4, prec: 0.045871559633027525
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.040573717534565186, TP: 314, TP+FP:7739
+ Average path length between actual and predicted class: 5.325524520530313, for 7769 entities, max_length: 11
+alpha: 0.6000000000000001, beta: 0.5, prec: 0.040573717534565186
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.03294999353921695, TP: 255, TP+FP:7739
+ Average path length between actual and predicted class: 5.36516926245334, for 7769 entities, max_length: 11
+alpha: 0.6000000000000001, beta: 0.6000000000000001, prec: 0.03294999353921695
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.03010724899857863, TP: 233, TP+FP:7739
+ Average path length between actual and predicted class: 5.3898828678079544, for 7769 entities, max_length: 11
+alpha: 0.6000000000000001, beta: 0.7000000000000001, prec: 0.03010724899857863
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.04509626566739889, TP: 349, TP+FP:7739
+ Average path length between actual and predicted class: 5.291028446389497, for 7769 entities, max_length: 11
+alpha: 0.7000000000000001, beta: 0.4, prec: 0.04509626566739889
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.03979842356893656, TP: 308, TP+FP:7739
+ Average path length between actual and predicted class: 5.320118419358991, for 7769 entities, max_length: 11
+alpha: 0.7000000000000001, beta: 0.5, prec: 0.03979842356893656
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.03540509109704096, TP: 274, TP+FP:7739
+ Average path length between actual and predicted class: 5.343287424378942, for 7769 entities, max_length: 11
+alpha: 0.7000000000000001, beta: 0.6000000000000001, prec: 0.03540509109704096
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+Failed entities to map 0
+Precision is: 0.0316578369298359, TP: 245, TP+FP:7739
+ Average path length between actual and predicted class: 5.3731496975157675, for 7769 entities, max_length: 11
+alpha: 0.7000000000000001, beta: 0.7000000000000001, prec: 0.0316578369298359
+Elapsed time for running config search %.2f minutes 5.203385615348816
+alpha: 0.5, beta: 0.4, precision: 0.046776069259594266
+alpha: 0.6000000000000001, beta: 0.4, precision: 0.045871559633027525
+alpha: 0.4, beta: 0.4, precision: 0.045225481328336994
+alpha: 0.7000000000000001, beta: 0.4, precision: 0.04509626566739889
+alpha: 0.6000000000000001, beta: 0.5, precision: 0.040573717534565186
+alpha: 0.7000000000000001, beta: 0.5, precision: 0.03979842356893656
+alpha: 0.5, beta: 0.5, precision: 0.03966920790799845
+alpha: 0.4, beta: 0.5, precision: 0.036826463367360125
+alpha: 0.7000000000000001, beta: 0.6000000000000001, precision: 0.03540509109704096
+alpha: 0.6000000000000001, beta: 0.6000000000000001, precision: 0.03294999353921695
+alpha: 0.4, beta: 0.6000000000000001, precision: 0.03217469957358832
+alpha: 0.5, beta: 0.6000000000000001, precision: 0.03191626825171211
+alpha: 0.7000000000000001, beta: 0.7000000000000001, precision: 0.0316578369298359
+alpha: 0.6000000000000001, beta: 0.7000000000000001, precision: 0.03010724899857863
+alpha: 0.5, beta: 0.7000000000000001, precision: 0.028169014084507043
+alpha: 0.4, beta: 0.7000000000000001, precision: 0.028039798423568938
 
 Process finished with exit code 0

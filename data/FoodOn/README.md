@@ -12,3 +12,5 @@ we are working subtree rooted at (foodon product type) 'http://purl.obolibrary.o
 foodonpairs.txt columns are exact same class label as in CSV file no preprocessing no phrase detection is used.
 
 Download "FDC dataset" and then create foodon.csv file using code in fdc_data.py
+
+Use Sysnonyms column split by '|' and then add the words which are not in label.
