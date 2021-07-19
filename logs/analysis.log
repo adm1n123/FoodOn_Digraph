@@ -1,4 +1,4 @@
-Predicting using all classes(inorder traversal, brute force)
+predicted using traverse_greedy(traverse all subtree with score>parent). blocking of backtrack is not used.
 
 C:\Users\4dm1n123\anaconda3\envs\foodon_love\python.exe C:/Users/4dm1n123/PycharmProjects/FoodOn_Tree/main.py
 generating child parent pairs
@@ -7,35 +7,35 @@ Found %d classes. 2765
 Found %d entities. 10897
 Generating Digraph
 Seeding digraph.
-Found 7772 non-seed entities to populate out of 10897 all entities.
+Found 7762 non-seed entities to populate out of 10897 all entities.
 Loading word2vec...
-Elapsed time %.2f minutes 0.9924418091773987
+Elapsed time %.2f minutes 1.1971269647280376
 Phrase detection skipped
-Elapsed time for getting class label vectors %.2f minutes 0.12403793334960937
+Elapsed time for getting class label vectors %.2f minutes 0.14940459728240968
 Phrase detection skipped
-Elapsed time for getting entity label vectors %.2f minutes 0.3744686484336853
+Elapsed time for getting entity label vectors %.2f minutes 0.411946964263916
 Running config ...
 Root is: http://purl.obolibrary.org/obo/FOODON_00001002
- Total entities predicted: 500/7772
- Total entities predicted: 1000/7772
- Total entities predicted: 1500/7772
- Total entities predicted: 2000/7772
- Total entities predicted: 2500/7772
- Total entities predicted: 3000/7772
- Total entities predicted: 3500/7772
- Total entities predicted: 4000/7772
- Total entities predicted: 4500/7772
- Total entities predicted: 5000/7772
- Total entities predicted: 5500/7772
- Total entities predicted: 6000/7772
- Total entities predicted: 6500/7772
- Total entities predicted: 7000/7772
- Total entities predicted: 7500/7772
+ Total entities predicted: 500/7762
+ Total entities predicted: 1000/7762
+ Total entities predicted: 1500/7762
+ Total entities predicted: 2000/7762
+ Total entities predicted: 2500/7762
+ Total entities predicted: 3000/7762
+ Total entities predicted: 3500/7762
+ Total entities predicted: 4000/7762
+ Total entities predicted: 4500/7762
+ Total entities predicted: 5000/7762
+ Total entities predicted: 5500/7762
+ Total entities predicted: 6000/7762
+ Total entities predicted: 6500/7762
+ Total entities predicted: 7000/7762
+ Total entities predicted: 7500/7762
 Failed entities to map 0
-Precision is: 0.27798579728857326, TP: 2153, TP+FP:7745
- Average path length between actual and predicted class: 2.747555326814205, for 7772 entities, max_length: 11
-alpha: 0.8, beta: 1, prec: 0.27798579728857326
-Elapsed time for running config search %.2f minutes 33.006869077682495
-alpha: 0.8, beta: 1, precision: 0.27798579728857326
+Precision is: 0.1297038665459718, TP: 1003, TP+FP:7733
+ Average path length between actual and predicted class: 4.49613501674826, for 7762 entities, max_length: 11
+alpha: 0.8, beta: 1, prec: 0.1297038665459718
+Elapsed time for running config search %.2f minutes 2.624077844619751
+alpha: 0.8, beta: 1, precision: 0.1297038665459718
 
 Process finished with exit code 0
