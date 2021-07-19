@@ -128,7 +128,7 @@ class Scoring:
         count = 0
         # print('\n Traversing_with_blocking_backtrack\n')
         # print('\n Traversing_all_classes_Rc\n')
-        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
+        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Sc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
             # self.traverse_with_blocking(self.root, entity)
@@ -151,7 +151,7 @@ class Scoring:
     def traverse_all_Rc(self, root, entity):
         score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
 
-        if score > entity.score:  # compare with any previous class scores
+        if score > entity.score and len(root.children) > 0:  # compare with any previous class scores
             entity.score = score
             entity.predicted_class = root
 
@@ -160,8 +160,9 @@ class Scoring:
 
         return None
 
+
     def traverse_greedy(self, root, entity):    # traverse all children with high score. don't block backtrack.
-        score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
+        score = self._cosine_similarity(root.Sc, entity.Le)   # score of class with current entity used for traversal only.
 
         if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
             entity.score = score
@@ -170,7 +171,7 @@ class Scoring:
         if len(root.children) == 0:
             return None
 
-        score = self._cosine_similarity(root.Sc, entity.Le)
+        # score = self._cosine_similarity(root.Sc, entity.Le)
         for child in root.children:
             child_score = self._cosine_similarity(child.Sc, entity.Le)
             if child_score >= score: # take all child with score >=
