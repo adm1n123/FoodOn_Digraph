@@ -6,10 +6,10 @@ Found 10897 entities.
 Generating Digraph
 Seeding digraph.
 Classes without entities: 326
-Found 7770 non-seed entities to populate out of 10897 all entities.
-Loading word2vec...Elapsed time 1.11 minutes
-Elapsed time for getting class label vectors 0.14 minutes
-Elapsed time for getting entity label vectors 0.44 minutes
+Found 7774 non-seed entities to populate out of 10897 all entities.
+Loading word2vec...Elapsed time 1.22 minutes
+Elapsed time for getting class label vectors 0.13 minutes
+Elapsed time for getting entity label vectors 0.40 minutes
 
 
 Running config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...
@@ -18,24 +18,24 @@ Root is: http://purl.obolibrary.org/obo/FOODON_00001002
 
  Traversing_all_classes_Rc
 
- Total entities predicted: 7770/7770
+ Total entities predicted: 7774/7774
 Failed to predict:0 entities, Average number of classes visited for prediction:5675.0
-Precision is: 0.342, TP: 2647, TP+FP:7740
+Precision is: 0.379, TP: 2935, TP+FP:7742
 Could not predict:0 entities, 0 entities predicted to class without entity
- Average path length between actual and predicted class: 4.73, for 7770 entities, max_length: 19
-alpha: 0.1, beta: 0.0, prec: 0.342
+ Average path length between actual and predicted class: 4.45, for 7774 entities, max_length: 17
+alpha: 0.4, beta: 0.0, prec: 0.379
 Root is: http://purl.obolibrary.org/obo/FOODON_00001002
 
  Traversing_all_classes_Rc
 
- Total entities predicted: 7770/7770
+ Total entities predicted: 7774/7774
 Failed to predict:0 entities, Average number of classes visited for prediction:5675.0
-Precision is: 0.372, TP: 2880, TP+FP:7740
+Precision is: 0.365, TP: 2825, TP+FP:7742
 Could not predict:0 entities, 0 entities predicted to class without entity
- Average path length between actual and predicted class: 4.52, for 7770 entities, max_length: 19
-alpha: 0.3, beta: 0.0, prec: 0.372
-Elapsed time for running config search 60.50 minutes
-alpha: 0.3, beta: 0.0, precision: 0.372
-alpha: 0.1, beta: 0.0, precision: 0.342
+ Average path length between actual and predicted class: 4.59, for 7774 entities, max_length: 17
+alpha: 0.5, beta: 0.0, prec: 0.365
+Elapsed time for running config search 59.50 minutes
+alpha: 0.4, beta: 0.0, precision: 0.379
+alpha: 0.5, beta: 0.0, precision: 0.365
 
 Process finished with exit code 0

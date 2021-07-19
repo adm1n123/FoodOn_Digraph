@@ -92,7 +92,7 @@ class Scoring:
         print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
         self.print_stats()
 
-        for alpha in [.1, .3]:#[x*.1 for x in range(2, 9, 2)]:
+        for alpha in [.4,.5]:#[x*.1 for x in range(2, 9, 2)]:
             for beta in [0]:#[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
