@@ -115,13 +115,13 @@ class FoodOn:
         classes = self.pd_foodon_pairs['Parent'].tolist()   # every non-leaf is a class.
         classes = list(set(classes))
         classes.sort()
-        print('Found %d classes.', len(classes))
+        print('Found %d classes.' % len(classes))
 
         child = self.pd_foodon_pairs['Child'].tolist()
         child = list(set(child))
         child.sort()
         entities = [c for c in child if c not in classes]   # child which is also parent is not leaf(instance)
-        print('Found %d entities.', len(entities))
+        print('Found %d entities.' % len(entities))
         return classes, entities
 
     def generate_digraph(self):
@@ -203,6 +203,7 @@ class FoodOn:
             return load_pkl(self.digraph_seeded_pkl)
 
         non_seeds = set()
+        count = 0
         for _, node in self.class_dict.items():
             if len(node.all_entities) > self.num_seeds:
                 node.seed_entities = random.sample(node.all_entities, self.num_seeds)
@@ -212,7 +213,10 @@ class FoodOn:
                 node.seed_entities = node.all_entities.copy()
             rest = list(set(node.all_entities) - set(node.seed_entities))
             non_seeds = non_seeds.union(set(rest))
+            if len(node.all_entities) == 0:
+                count += 1
 
+        print(f'Classes without entities: {count}')
         digraph_seeded = (self.class_dict, list(non_seeds))
         # print('Saving seeded digraph to file: %s', self.digraph_seeded_pkl)
         # save_pkl(digraph_seeded, self.digraph_seeded_pkl)

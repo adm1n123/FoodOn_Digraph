@@ -25,11 +25,11 @@ class Scoring:
 
 
         t1 = time()
-        print('Loading word2vec...')
+        print('Loading word2vec...', end='')
         self.vec_dim = 300
         self.keyed_vectors = KeyedVectors.load_word2vec_format('data/model/word2vec_trained.txt')
         t2 = time()
-        print('Elapsed time %.2f minutes', (t2 - t1) / 60)
+        print('Elapsed time %.2f minutes' % ((t2 - t1) / 60))
 
         self.fpm = FDCPreprocess()
 
@@ -44,7 +44,7 @@ class Scoring:
             node.Lc = row['vector']
             node.label = row['preprocessed']
         t2 = time()
-        print('Elapsed time for getting class label vectors %.2f minutes', (t2 - t1) / 60)
+        print('Elapsed time for getting class label vectors %.2f minutes' % ((t2 - t1) / 60))
 
         t1 = time()
         entity_id_labels = list(
@@ -55,7 +55,7 @@ class Scoring:
             node.Le = row['vector']
             node.label = row['preprocessed']
         t2 = time()
-        print('Elapsed time for getting entity label vectors %.2f minutes', (t2 - t1) / 60, flush=True)
+        print('Elapsed time for getting entity label vectors %.2f minutes' % ((t2 - t1) / 60))
 
     def reset_nodes(self):
         for _, node in self.class_dict.items():
@@ -75,10 +75,10 @@ class Scoring:
     def run_config(self):
         t1 = time()
         prec = []
-        print('Running config ...')
+        print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
 
-        for alpha in [.8]: #x*.1 for x in range(4, 8)]:
-            for beta in [1]: #x*.1 for x in range(4, 8)]:
+        for alpha in [x*.1 for x in range(2, 9, 2)]:
+            for beta in [x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
@@ -89,12 +89,12 @@ class Scoring:
                 p = self.calculate_precision()
                 self.find_avg_path_length()
                 prec.append([alpha, beta, p])
-                print(f'alpha: {alpha}, beta: {beta}, prec: {p}')
+                print(f'alpha: {alpha:.1f}, beta: {beta:.1f}, prec: {p:.3f}')
         t2 = time()
-        print('Elapsed time for running config search %.2f minutes', (t2 - t1) / 60)
+        print('Elapsed time for running config search %.2f minutes' % ((t2 - t1) / 60))
         prec.sort(key=lambda x: x[2], reverse=True)
         for p in prec:
-            print(f'alpha: {p[0]}, beta: {p[1]}, precision: {p[2]}')
+            print(f'alpha: {p[0]:.1f}, beta: {p[1]:.1f}, precision: {p[2]:.3f}')
 
         return None
 
@@ -128,7 +128,7 @@ class Scoring:
         count = 0
         # print('\n Traversing_with_blocking_backtrack\n')
         # print('\n Traversing_all_classes_Rc\n')
-        print('\n Traversing_greedily\n')
+        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
             # self.traverse_with_blocking(self.root, entity)
@@ -142,9 +142,9 @@ class Scoring:
                 failed += 1
             count += 1
             if count % 500 == 0:
-                print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}')
-
-        print('Failed entities to map', failed)
+                print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}', end='')
+        print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}')
+        print('Failed to predict', failed, 'entities')
         return None
 
 
@@ -161,19 +161,19 @@ class Scoring:
         return None
 
     def traverse_greedy(self, root, entity):    # traverse all children with high score. don't block backtrack.
-        root.score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
+        score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
 
-        if root.score > entity.score:  # compare with any previous class scores
-            entity.score = root.score
+        if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
+            entity.score = score
             entity.predicted_class = root
 
         if len(root.children) == 0:
             return None
 
-        scoreSc = self._cosine_similarity(root.Sc, entity.Le)
+        score = self._cosine_similarity(root.Sc, entity.Le)
         for child in root.children:
-            score = self._cosine_similarity(child.Sc, entity.Le)
-            if score >= scoreSc: # take all child with score >=
+            child_score = self._cosine_similarity(child.Sc, entity.Le)
+            if child_score >= score: # take all child with score >=
                 self.traverse_greedy(child, entity)
 
         return None
@@ -294,16 +294,23 @@ class Scoring:
 
     def calculate_precision(self):
         TP, FP = 0, 0
+        count = 0
+        not_predicted = 0
         for entity in self.non_seeds:
             if not np.any(entity.Le):   # ignore entities without labels
                 continue
             elif entity.predicted_class is None:    # coud not predict class good to put them
                 FP += 1
+                not_predicted += 1
             elif entity in entity.predicted_class.all_entities:
                 TP += 1
             else:
                 FP += 1
-        print(f'Precision is: {TP/(TP+FP)}, TP: {TP}, TP+FP:{TP+FP}')
+                if len(entity.predicted_class.all_entities) == 0:
+                    count += 1
+
+        print(f'Precision is: {TP/(TP+FP):.3f}, TP: {TP}, TP+FP:{TP+FP}')
+        print(f'Could not predict:{not_predicted} entities, {count} entities predicted to class without entity')
 
         return TP/(TP+FP)
 
@@ -323,20 +330,22 @@ class Scoring:
             while node != self.root:
                 path_p.append(node)
                 node = node.parents[0]
+            path_p.append(self.root)
 
             node = pred_parent
             while node != self.root:
                 path_pred.append(node)
                 node = node.parents[0]
+            path_pred.append(self.root)
 
-            unique = set(path_p) - set(path_pred)
+            unique = set(path_p+path_pred) - set(path_p).intersection(set(path_pred))
             length += len(unique) + 1   # +1 for LCA
             count += 1
 
             if len(unique) + 1 > max_len:
                 max_len = len(unique) + 1
 
-        print(f' Average path length between actual and predicted class: {length/count}, for {count} entities, max_length: {max_len}')
+        print(f' Average path length between actual and predicted class: {length/count:.2f}, for {count} entities, max_length: {max_len}')
 
 
     def detect_cycle(self, root):

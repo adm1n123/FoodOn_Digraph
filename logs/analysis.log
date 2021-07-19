@@ -1,46 +1,194 @@
-predicted using traverse_greedy(traverse all subtree with score>parent). blocking of backtrack is not used.
-score for prediction Rc (root.score > entity.score)
-score for traversing Sc (child Sc score > parent Sc score)
-
 C:\Users\4dm1n123\anaconda3\envs\foodon_love\python.exe C:/Users/4dm1n123/PycharmProjects/FoodOn_Tree/main.py
 generating child parent pairs
 Using pre-generated pairs file.
-Found %d classes. 2765
-Found %d entities. 10897
+Found 2765 classes.
+Found 10897 entities.
 Generating Digraph
 Seeding digraph.
-Found 7763 non-seed entities to populate out of 10897 all entities.
-Loading word2vec...
-Elapsed time %.2f minutes 0.9911330262819926
-Phrase detection skipped
-Elapsed time for getting class label vectors %.2f minutes 0.12774362961451213
-Phrase detection skipped
-Elapsed time for getting entity label vectors %.2f minutes 0.37416637341181436
-Running config ...
+Classes without entities: 326
+Found 7780 non-seed entities to populate out of 10897 all entities.
+Loading word2vec...Elapsed time 1.03 minutes
+Elapsed time for getting class label vectors 0.12 minutes
+Elapsed time for getting entity label vectors 0.38 minutes
+
+
+Running config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...
 Root is: http://purl.obolibrary.org/obo/FOODON_00001002
 
- Traversing_greedily
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
 
- Total entities predicted: 500/7763
- Total entities predicted: 1000/7763
- Total entities predicted: 1500/7763
- Total entities predicted: 2000/7763
- Total entities predicted: 2500/7763
- Total entities predicted: 3000/7763
- Total entities predicted: 3500/7763
- Total entities predicted: 4000/7763
- Total entities predicted: 4500/7763
- Total entities predicted: 5000/7763
- Total entities predicted: 5500/7763
- Total entities predicted: 6000/7763
- Total entities predicted: 6500/7763
- Total entities predicted: 7000/7763
- Total entities predicted: 7500/7763
-Failed entities to map 0
-Precision is: 0.12912407814723767, TP: 998, TP+FP:7729
- Average path length between actual and predicted class: 4.505603503800077, for 7763 entities, max_length: 11
-alpha: 0.8, beta: 1, prec: 0.12912407814723767
-Elapsed time for running config search %.2f minutes 3.4008339126904805
-alpha: 0.8, beta: 1, precision: 0.12912407814723767
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.162, TP: 1254, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.39, for 7780 entities, max_length: 11
+alpha: 0.2, beta: 0.2, prec: 0.162
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.200, TP: 1550, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.14, for 7780 entities, max_length: 11
+alpha: 0.2, beta: 0.4, prec: 0.200
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.222, TP: 1716, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 3.97, for 7780 entities, max_length: 11
+alpha: 0.2, beta: 0.6, prec: 0.222
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.195, TP: 1513, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.11, for 7780 entities, max_length: 11
+alpha: 0.2, beta: 0.8, prec: 0.195
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.173, TP: 1338, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.33, for 7780 entities, max_length: 11
+alpha: 0.4, beta: 0.2, prec: 0.173
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.209, TP: 1617, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.11, for 7780 entities, max_length: 11
+alpha: 0.4, beta: 0.4, prec: 0.209
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.238, TP: 1840, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 3.92, for 7780 entities, max_length: 11
+alpha: 0.4, beta: 0.6, prec: 0.238
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.213, TP: 1647, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.09, for 7780 entities, max_length: 11
+alpha: 0.4, beta: 0.8, prec: 0.213
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.161, TP: 1250, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.38, for 7780 entities, max_length: 11
+alpha: 0.6, beta: 0.2, prec: 0.161
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.191, TP: 1479, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.19, for 7780 entities, max_length: 11
+alpha: 0.6, beta: 0.4, prec: 0.191
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.201, TP: 1557, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.10, for 7780 entities, max_length: 11
+alpha: 0.6, beta: 0.6, prec: 0.201
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.189, TP: 1462, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.19, for 7780 entities, max_length: 11
+alpha: 0.6, beta: 0.8, prec: 0.189
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.141, TP: 1095, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.46, for 7780 entities, max_length: 11
+alpha: 0.8, beta: 0.2, prec: 0.141
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.155, TP: 1202, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.34, for 7780 entities, max_length: 11
+alpha: 0.8, beta: 0.4, prec: 0.155
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.161, TP: 1247, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.30, for 7780 entities, max_length: 11
+alpha: 0.8, beta: 0.6, prec: 0.161
+Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+
+Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
+
+ Total entities predicted: 7780/7780
+Failed to predict 0 entities
+Precision is: 0.148, TP: 1144, TP+FP:7747
+Could not predict:0 entities, 0 entities predicted to class without entity
+ Average path length between actual and predicted class: 4.38, for 7780 entities, max_length: 11
+alpha: 0.8, beta: 0.8, prec: 0.148
+Elapsed time for running config search 33.97 minutes
+alpha: 0.4, beta: 0.6, precision: 0.238
+alpha: 0.2, beta: 0.6, precision: 0.222
+alpha: 0.4, beta: 0.8, precision: 0.213
+alpha: 0.4, beta: 0.4, precision: 0.209
+alpha: 0.6, beta: 0.6, precision: 0.201
+alpha: 0.2, beta: 0.4, precision: 0.200
+alpha: 0.2, beta: 0.8, precision: 0.195
+alpha: 0.6, beta: 0.4, precision: 0.191
+alpha: 0.6, beta: 0.8, precision: 0.189
+alpha: 0.4, beta: 0.2, precision: 0.173
+alpha: 0.2, beta: 0.2, precision: 0.162
+alpha: 0.6, beta: 0.2, precision: 0.161
+alpha: 0.8, beta: 0.6, precision: 0.161
+alpha: 0.8, beta: 0.4, precision: 0.155
+alpha: 0.8, beta: 0.8, precision: 0.148
+alpha: 0.8, beta: 0.2, precision: 0.141
 
 Process finished with exit code 0

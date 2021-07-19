@@ -38,7 +38,7 @@ class FDCPreprocess:
     def generate_phrases(self, pd_series, load_model=False):  # pd_series is series of list of words.
         sentences = pd_series.tolist()
         if not self.generate_phrase:
-            print('Phrase detection skipped')
+            # print('Phrase detection skipped')
             return pd_series
         if load_model:
             model = Phraser.load(self.phrase_model_file)
