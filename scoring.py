@@ -170,9 +170,10 @@ class Scoring:
         if len(root.children) == 0:
             return None
 
+        scoreSc = self._cosine_similarity(root.Sc, entity.Le)
         for child in root.children:
-            score = self._cosine_similarity(child.Rc, entity.Le)
-            if score >= root.score: # take all child with score >=
+            score = self._cosine_similarity(child.Sc, entity.Le)
+            if score >= scoreSc: # take all child with score >=
                 self.traverse_greedy(child, entity)
 
         return None
