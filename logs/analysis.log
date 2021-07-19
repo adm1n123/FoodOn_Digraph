@@ -1,3 +1,5 @@
+Predicting using all classes(inorder traversal, brute force)
+
 C:\Users\4dm1n123\anaconda3\envs\foodon_love\python.exe C:/Users/4dm1n123/PycharmProjects/FoodOn_Tree/main.py
 generating child parent pairs
 Using pre-generated pairs file.
@@ -5,110 +7,35 @@ Found %d classes. 2765
 Found %d entities. 10897
 Generating Digraph
 Seeding digraph.
-Found 7769 non-seed entities to populate out of 10897 all entities.
+Found 7772 non-seed entities to populate out of 10897 all entities.
 Loading word2vec...
-Elapsed time %.2f minutes 0.9763147870699564
+Elapsed time %.2f minutes 0.9924418091773987
 Phrase detection skipped
-Elapsed time for getting class label vectors %.2f minutes 0.13398830890655516
+Elapsed time for getting class label vectors %.2f minutes 0.12403793334960937
 Phrase detection skipped
-Elapsed time for getting entity label vectors %.2f minutes 0.38579559326171875
+Elapsed time for getting entity label vectors %.2f minutes 0.3744686484336853
 Running config ...
 Root is: http://purl.obolibrary.org/obo/FOODON_00001002
+ Total entities predicted: 500/7772
+ Total entities predicted: 1000/7772
+ Total entities predicted: 1500/7772
+ Total entities predicted: 2000/7772
+ Total entities predicted: 2500/7772
+ Total entities predicted: 3000/7772
+ Total entities predicted: 3500/7772
+ Total entities predicted: 4000/7772
+ Total entities predicted: 4500/7772
+ Total entities predicted: 5000/7772
+ Total entities predicted: 5500/7772
+ Total entities predicted: 6000/7772
+ Total entities predicted: 6500/7772
+ Total entities predicted: 7000/7772
+ Total entities predicted: 7500/7772
 Failed entities to map 0
-Precision is: 0.045225481328336994, TP: 350, TP+FP:7739
- Average path length between actual and predicted class: 5.308920066932681, for 7769 entities, max_length: 11
-alpha: 0.4, beta: 0.4, prec: 0.045225481328336994
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.036826463367360125, TP: 285, TP+FP:7739
- Average path length between actual and predicted class: 5.363238512035011, for 7769 entities, max_length: 11
-alpha: 0.4, beta: 0.5, prec: 0.036826463367360125
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.03217469957358832, TP: 249, TP+FP:7739
- Average path length between actual and predicted class: 5.393486935255503, for 7769 entities, max_length: 11
-alpha: 0.4, beta: 0.6000000000000001, prec: 0.03217469957358832
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.028039798423568938, TP: 217, TP+FP:7739
- Average path length between actual and predicted class: 5.429913759814648, for 7769 entities, max_length: 11
-alpha: 0.4, beta: 0.7000000000000001, prec: 0.028039798423568938
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.046776069259594266, TP: 362, TP+FP:7739
- Average path length between actual and predicted class: 5.293602780280603, for 7769 entities, max_length: 11
-alpha: 0.5, beta: 0.4, prec: 0.046776069259594266
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.03966920790799845, TP: 307, TP+FP:7739
- Average path length between actual and predicted class: 5.343802291157163, for 7769 entities, max_length: 11
-alpha: 0.5, beta: 0.5, prec: 0.03966920790799845
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.03191626825171211, TP: 247, TP+FP:7739
- Average path length between actual and predicted class: 5.386793667138628, for 7769 entities, max_length: 11
-alpha: 0.5, beta: 0.6000000000000001, prec: 0.03191626825171211
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.028169014084507043, TP: 218, TP+FP:7739
- Average path length between actual and predicted class: 5.4089329386021365, for 7769 entities, max_length: 11
-alpha: 0.5, beta: 0.7000000000000001, prec: 0.028169014084507043
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.045871559633027525, TP: 355, TP+FP:7739
- Average path length between actual and predicted class: 5.291929463251384, for 7769 entities, max_length: 11
-alpha: 0.6000000000000001, beta: 0.4, prec: 0.045871559633027525
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.040573717534565186, TP: 314, TP+FP:7739
- Average path length between actual and predicted class: 5.325524520530313, for 7769 entities, max_length: 11
-alpha: 0.6000000000000001, beta: 0.5, prec: 0.040573717534565186
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.03294999353921695, TP: 255, TP+FP:7739
- Average path length between actual and predicted class: 5.36516926245334, for 7769 entities, max_length: 11
-alpha: 0.6000000000000001, beta: 0.6000000000000001, prec: 0.03294999353921695
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.03010724899857863, TP: 233, TP+FP:7739
- Average path length between actual and predicted class: 5.3898828678079544, for 7769 entities, max_length: 11
-alpha: 0.6000000000000001, beta: 0.7000000000000001, prec: 0.03010724899857863
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.04509626566739889, TP: 349, TP+FP:7739
- Average path length between actual and predicted class: 5.291028446389497, for 7769 entities, max_length: 11
-alpha: 0.7000000000000001, beta: 0.4, prec: 0.04509626566739889
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.03979842356893656, TP: 308, TP+FP:7739
- Average path length between actual and predicted class: 5.320118419358991, for 7769 entities, max_length: 11
-alpha: 0.7000000000000001, beta: 0.5, prec: 0.03979842356893656
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.03540509109704096, TP: 274, TP+FP:7739
- Average path length between actual and predicted class: 5.343287424378942, for 7769 entities, max_length: 11
-alpha: 0.7000000000000001, beta: 0.6000000000000001, prec: 0.03540509109704096
-Root is: http://purl.obolibrary.org/obo/FOODON_00001002
-Failed entities to map 0
-Precision is: 0.0316578369298359, TP: 245, TP+FP:7739
- Average path length between actual and predicted class: 5.3731496975157675, for 7769 entities, max_length: 11
-alpha: 0.7000000000000001, beta: 0.7000000000000001, prec: 0.0316578369298359
-Elapsed time for running config search %.2f minutes 5.203385615348816
-alpha: 0.5, beta: 0.4, precision: 0.046776069259594266
-alpha: 0.6000000000000001, beta: 0.4, precision: 0.045871559633027525
-alpha: 0.4, beta: 0.4, precision: 0.045225481328336994
-alpha: 0.7000000000000001, beta: 0.4, precision: 0.04509626566739889
-alpha: 0.6000000000000001, beta: 0.5, precision: 0.040573717534565186
-alpha: 0.7000000000000001, beta: 0.5, precision: 0.03979842356893656
-alpha: 0.5, beta: 0.5, precision: 0.03966920790799845
-alpha: 0.4, beta: 0.5, precision: 0.036826463367360125
-alpha: 0.7000000000000001, beta: 0.6000000000000001, precision: 0.03540509109704096
-alpha: 0.6000000000000001, beta: 0.6000000000000001, precision: 0.03294999353921695
-alpha: 0.4, beta: 0.6000000000000001, precision: 0.03217469957358832
-alpha: 0.5, beta: 0.6000000000000001, precision: 0.03191626825171211
-alpha: 0.7000000000000001, beta: 0.7000000000000001, precision: 0.0316578369298359
-alpha: 0.6000000000000001, beta: 0.7000000000000001, precision: 0.03010724899857863
-alpha: 0.5, beta: 0.7000000000000001, precision: 0.028169014084507043
-alpha: 0.4, beta: 0.7000000000000001, precision: 0.028039798423568938
+Precision is: 0.27798579728857326, TP: 2153, TP+FP:7745
+ Average path length between actual and predicted class: 2.747555326814205, for 7772 entities, max_length: 11
+alpha: 0.8, beta: 1, prec: 0.27798579728857326
+Elapsed time for running config search %.2f minutes 33.006869077682495
+alpha: 0.8, beta: 1, precision: 0.27798579728857326
 
 Process finished with exit code 0

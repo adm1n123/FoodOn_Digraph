@@ -1,4 +1,4 @@
-
+import multiprocessing
 
 import nltk
 import pandas as pd
@@ -77,8 +77,8 @@ class Scoring:
         prec = []
         print('Running config ...')
 
-        for alpha in [x*.1 for x in range(4, 8)]:
-            for beta in [x*.1 for x in range(4, 8)]:
+        for alpha in [.8]: #x*.1 for x in range(4, 8)]:
+            for beta in [1]: #x*.1 for x in range(4, 8)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
@@ -125,18 +125,36 @@ class Scoring:
 
     def predict_entity(self):
         failed = 0
+        count = 0
+
         for entity in self.non_seeds:
             entity.score = -2
-
-            self.traverse(self.root, entity)
+            # self.traverse(self.root, entity)
+            self.traverse_all_Rc(self.root, entity)
 
             pred_class = entity.predicted_class
             if pred_class:
                 pred_class.predicted_entities.append(entity)
             else:
                 failed += 1
+            count += 1
+            if count % 500 == 0:
+                print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}')
 
         print('Failed entities to map', failed)
+        return None
+
+
+    def traverse_all_Rc(self, root, entity):
+        score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
+
+        if score > entity.score:  # compare with any previous class scores
+            entity.score = score
+            entity.predicted_class = root
+
+        for child in root.children:
+            self.traverse_all_Rc(child, entity)
+
         return None
 
     def traverse(self, root, entity):
@@ -186,7 +204,7 @@ class Scoring:
             entity_avg = np.mean(non_zero_entities, axis=0)
             return np.add(self.alpha * node.Lc, (1 - self.alpha) * entity_avg)
         else:
-            return np.copy(node.Lc)
+            return np.add(self.alpha * node.Lc, (1 - self.alpha) * np.zeros(self.vec_dim))
 
 
     def _Sc(self, node):
