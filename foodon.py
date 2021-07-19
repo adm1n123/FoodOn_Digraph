@@ -302,3 +302,4 @@ class Entity:
         self.score = None   # list of all the scores during traversal.
         self.predicted_class = None
         self.parents = []  # all parent classes
+        self.visited_classes = 0

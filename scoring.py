@@ -69,16 +69,31 @@ class Scoring:
         for _, entity in self.entity_dict.items():
             entity.score = None  # list of all the scores during traversal.
             entity.predicted_class = None
+            entity.visited_classes = 0
+
         return None
 
+    def print_stats(self):
+        parents_c = 0
+        max_parents = 0
+        classes = 0
+        for _, node in self.class_dict.items():
+            parents_c += len(node.parents)
+            classes += 1
+            if len(node.parents) > max_parents:
+                max_parents = len(node.parents)
+        print(f'Average number of parents to a class: {parents_c/classes:.2f}')
+
+        return None
 
     def run_config(self):
         t1 = time()
         prec = []
         print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
+        self.print_stats()
 
-        for alpha in [x*.1 for x in range(2, 9, 2)]:
-            for beta in [x*.1 for x in range(2, 9, 2)]:
+        for alpha in [.2]:#[x*.1 for x in range(2, 9, 2)]:
+            for beta in [0]:#[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
@@ -126,32 +141,32 @@ class Scoring:
     def predict_entity(self):
         failed = 0
         count = 0
-        # print('\n Traversing_with_blocking_backtrack\n')
-        # print('\n Traversing_all_classes_Rc\n')
-        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Sc, Traverse subtrees using Sc\n')
+        visited_classes = 0
+        print('\n Traversing_all_classes_Rc\n')
+        # print('\nTraversing_greedily all subtree with higher score than parent, predict class using Sc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
-            # self.traverse_with_blocking(self.root, entity)
-            # self.traverse_all_Rc(self.root, entity)
-            self.traverse_greedy(self.root, entity)
-
+            self.traverse_all_Rc(self.root, entity)
+            # self.traverse_greedy(self.root, entity)
+            visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
+
             if pred_class:
                 pred_class.predicted_entities.append(entity)
             else:
                 failed += 1
             count += 1
-            if count % 500 == 0:
+            if count % 50 == 0:
                 print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}', end='')
         print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}')
-        print('Failed to predict', failed, 'entities')
+        print(f'Failed to predict:{failed} entities, Average number of classes visited for prediction:{visited_classes/count:.1f}')
         return None
 
 
     def traverse_all_Rc(self, root, entity):
         score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
-
-        if score > entity.score and len(root.children) > 0:  # compare with any previous class scores
+        entity.visited_classes += 1
+        if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
             entity.score = score
             entity.predicted_class = root
 
@@ -163,7 +178,7 @@ class Scoring:
 
     def traverse_greedy(self, root, entity):    # traverse all children with high score. don't block backtrack.
         score = self._cosine_similarity(root.Sc, entity.Le)   # score of class with current entity used for traversal only.
-
+        entity.visited_classes += 1
         if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
             entity.score = score
             entity.predicted_class = root
