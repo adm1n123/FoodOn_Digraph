@@ -96,7 +96,7 @@ class Scoring:
         print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
         self.print_stats()
 
-        for alpha in [x*.1 for x in range(1, 9)]:
+        for alpha in [.4, .5, .6]:#[x*.1 for x in range(1, 9)]:
             for beta in [0]: #[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
@@ -118,14 +118,14 @@ class Scoring:
         return None
 
 
-
-
-
     def precompute_tree_nodes(self):
         print(f'Root is: {self.root.ID}')
-        # self.post_order_traversal(self.root, depth=0)
-        self.post_order_traversal_avg_Rc(self.root)
+        self.post_order_traversal(self.root, depth=0)
+        print(f'Removing multiple parents')
+        # self.remove_multiple_parents()
+        # self.post_order_traversal_avg_Rc(self.root)
         return None
+
 
     def post_order_traversal_avg_Rc(self, root):    # find average of all Rc vectors in root subtree.
         root.Rc = self._Rc(root)
@@ -172,12 +172,12 @@ class Scoring:
         failed = 0
         count = 0
         visited_classes = 0
-        # print('\n Traversing_all_classes_Rc\n')
-        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
+        print('\n Traversing_all_classes_Rc\n')
+        # print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
-            # self.traverse_all_Rc(self.root, entity)
-            self.traverse_greedy(self.root, entity)
+            self.traverse_all_Rc(self.root, entity)
+            # self.traverse_greedy(self.root, entity)
             visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
 
@@ -258,8 +258,6 @@ class Scoring:
                 return None
 
         return None
-
-
 
 
     def _Rc(self, node):
@@ -397,13 +395,14 @@ class Scoring:
     def detect_cycle(self, root):
         for child in root.children:
             self.detect_cycle(child)
-
         return None
 
     def remove_multiple_parents(self):
-        for child in self.entity_dict.items():
+        for _, child in self.class_dict.items():
+            if len(child.parents) == 0:
+                continue
             for parent in child.parents[1:]:
-                parent.children = list(set(parent.children) - set(child))
+                parent.children = list(set(parent.children) - {child})
 
             child.parents = [child.parents[0]]  # store only first parent.
 
@@ -428,3 +427,32 @@ class Scoring:
 
         root.in_path = False
         return None
+
+
+    def run_analysis(self):
+
+        for alpha in [.2,.3,.4]:#[x*.1 for x in range(1, 9)]:
+            for beta in [0]: #[x*.1 for x in range(2, 9, 2)]:
+                self.reset_nodes()
+                self.alpha = alpha
+                self.beta = beta
+
+                self.precompute_tree_nodes()
+                self.predict_analysis()
+
+
+
+
+        return None
+
+    def predict_analysis(self):
+        for entity in self.non_seeds:
+            self.traverse_all_Rc(self.root, entity)
+            linear = entity.predicted_class
+
+            entity.score = -2
+            self.traverse_greedy(self.root, entity)
+            tree = entity.predicted_class
+
+
+        return
