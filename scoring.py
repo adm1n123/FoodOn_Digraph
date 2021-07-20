@@ -7,7 +7,7 @@ from fdc_preprocess import FDCPreprocess
 from gensim.models import KeyedVectors
 from time import time
 
-# from foodon import Class
+
 
 
 class Scoring:
@@ -15,6 +15,8 @@ class Scoring:
     TODO: don't consider entities without embeddings ignore them during precision calculation
     """
     def __init__(self, root, class_dict, entity_dict, non_seeds):
+        # from foodon import Class
+        # self.root = Class()
         self.root = root
         self.class_dict = class_dict
         self.entity_dict = entity_dict
@@ -65,6 +67,8 @@ class Scoring:
             node.predicted_entities = []  # predicted entities for this class
             node.backtrack = None  # can backtrack store the entity id or iteration number if iteration no == this iteration then do not backtrack.
             node.visited = 0
+            node.Rc_sum = None
+            node.Rc_count = 0
 
         for _, entity in self.entity_dict.items():
             entity.score = None  # list of all the scores during traversal.
@@ -92,8 +96,8 @@ class Scoring:
         print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
         self.print_stats()
 
-        for alpha in [.4,.5]:#[x*.1 for x in range(2, 9, 2)]:
-            for beta in [0]:#[x*.1 for x in range(2, 9, 2)]:
+        for alpha in [x*.1 for x in range(1, 9)]:
+            for beta in [0]: #[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
@@ -119,8 +123,34 @@ class Scoring:
 
     def precompute_tree_nodes(self):
         print(f'Root is: {self.root.ID}')
-        self.post_order_traversal(self.root, depth=0)
+        # self.post_order_traversal(self.root, depth=0)
+        self.post_order_traversal_avg_Rc(self.root)
         return None
+
+    def post_order_traversal_avg_Rc(self, root):    # find average of all Rc vectors in root subtree.
+        root.Rc = self._Rc(root)
+
+        if len(root.all_entities) == 0:
+            root.Rc_count = 0
+            root.Rc_sum = np.zeros(self.vec_dim)
+        else:
+            root.Rc_count = 1
+            root.Rc_sum = np.copy(root.Rc)
+
+        if len(root.children) == 0:
+            root.Sc = np.copy(root.Rc_sum)
+            return
+
+        for child in root.children:
+            self.post_order_traversal_avg_Rc(child)
+            root.Rc_sum = np.add(root.Rc_sum, child.Rc_sum)
+            root.Rc_count += child.Rc_count
+
+        root.Sc = root.Rc_sum / root.Rc_count   # avg of Rc vectors
+        return
+
+
+
 
     def post_order_traversal(self, root, depth):
 
@@ -142,12 +172,12 @@ class Scoring:
         failed = 0
         count = 0
         visited_classes = 0
-        print('\n Traversing_all_classes_Rc\n')
-        # print('\nTraversing_greedily all subtree with higher score than parent, predict class using Sc, Traverse subtrees using Sc\n')
+        # print('\n Traversing_all_classes_Rc\n')
+        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Sc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
-            self.traverse_all_Rc(self.root, entity)
-            # self.traverse_greedy(self.root, entity)
+            # self.traverse_all_Rc(self.root, entity)
+            self.traverse_greedy(self.root, entity)
             visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
 
@@ -156,7 +186,7 @@ class Scoring:
             else:
                 failed += 1
             count += 1
-            if count % 50 == 0:
+            if count % 100 == 0:
                 print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}', end='')
         print(f'\r Total entities predicted: {count}/{len(self.non_seeds)}')
         print(f'Failed to predict:{failed} entities, Average number of classes visited for prediction:{visited_classes/count:.1f}')

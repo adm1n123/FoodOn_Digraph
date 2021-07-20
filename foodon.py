@@ -292,6 +292,8 @@ class Class:
         self.children = []  # all child subclasses(not entities)
         self.parents = []    # all parents
         self.visited = 0
+        self.Rc_sum = None  # sum of all Rc vectors of subclasses whith non-zero entities.
+        self.Rc_count = 0   # count of all the classes in subtree with non-zero entities.
 
 class Entity:
     def __init__(self, ID):
