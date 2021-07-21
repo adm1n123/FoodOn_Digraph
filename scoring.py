@@ -69,6 +69,8 @@ class Scoring:
             node.visited = 0
             node.Rc_sum = None
             node.Rc_count = 0
+            node.pre_proc = False
+            node.visited_for = None
 
         for _, entity in self.entity_dict.items():
             entity.score = None  # list of all the scores during traversal.
@@ -96,8 +98,8 @@ class Scoring:
         print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
         self.print_stats()
 
-        for alpha in [.2, .4, .6]:#[x*.1 for x in range(1, 9)]:
-            for beta in [.6, .4, .8]: #[x*.1 for x in range(2, 9, 2)]:
+        for alpha in [.4]:#[x*.1 for x in range(1, 9)]:
+            for beta in [.6]: #[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
@@ -120,15 +122,19 @@ class Scoring:
 
     def precompute_tree_nodes(self):
         print(f'Root is: {self.root.ID}')
-        # self.post_order_traversal(self.root, depth=0)
+        print(f'running post_order_traversal for Rc, Sc computation.')
+        self.post_order_traversal(self.root, depth=0)
         # print(f'Removing multiple parents')
         # self.remove_multiple_parents()
-        print('\nUsing Rc_sum as Sc')
-        self.post_order_traversal_avg_Rc(self.root)
+        # print('\nUsing Rc_sum as Sc')
+        # self.post_order_traversal_avg_Rc(self.root)
         return None
 
 
     def post_order_traversal_avg_Rc(self, root):    # find average of all Rc vectors in root subtree.
+        if root.pre_proc:   # return because child has many parents.
+            return
+
         root.Rc = self._Rc(root)
 
         if len(root.all_entities) == 0:
@@ -140,6 +146,7 @@ class Scoring:
 
         if len(root.children) == 0:
             root.Sc = np.copy(root.Rc_sum)
+            root.pre_proc = True
             return
 
         for child in root.children:
@@ -148,16 +155,20 @@ class Scoring:
             root.Rc_count += child.Rc_count
 
         root.Sc = root.Rc_sum / root.Rc_count   # avg of Rc vectors
+        root.pre_proc = True
         return
 
 
 
 
     def post_order_traversal(self, root, depth):
+        if root.pre_proc:   # return because child has many parents.
+            return
 
         if len(root.children) == 0: # leaf class
             root.Rc = self._Rc(root)
             root.Sc = self._Sc(root)    # for leaf Sc = Rc
+            root.pre_proc = True
             return None
 
         for child in root.children:
@@ -165,6 +176,7 @@ class Scoring:
 
         root.Rc = self._Rc(root)
         root.Sc = self._Sc(root)
+        root.pre_proc = True
         return None
 
 
@@ -195,6 +207,9 @@ class Scoring:
 
 
     def traverse_all_Rc(self, root, entity):
+        if root.visited_for == entity:  # don't visited same node for same entity.
+            return
+
         score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
         entity.visited_classes += 1
         if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
@@ -204,10 +219,14 @@ class Scoring:
         for child in root.children:
             self.traverse_all_Rc(child, entity)
 
+        root.visited_for = entity
         return None
 
 
     def traverse_greedy(self, root, entity):    # traverse all children with high score. don't block backtrack.
+        if root.visited_for == entity:  # don't visited same node for same entity.
+            return
+
         score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
         entity.visited_classes += 1
         if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
@@ -215,7 +234,7 @@ class Scoring:
             entity.predicted_class = root
 
         if len(root.children) == 0:
-            return None
+            return
 
         score = self._cosine_similarity(root.Sc, entity.Le)
         for child in root.children:
@@ -223,41 +242,7 @@ class Scoring:
             if child_score >= score: # take all child with score >=
                 self.traverse_greedy(child, entity)
 
-        return None
-
-
-    def traverse_with_blocking(self, root, entity):
-        root.backtrack = True
-        root.score = self._cosine_similarity(root.Sc, entity.Le)   # score of class with current entity used for traversal only.
-
-        if root.score > entity.score:  # compare with any previous class scores
-            entity.score = root.score
-            entity.predicted_class = root
-
-        if len(root.children) == 0:
-            return None
-
-        child_scores = []
-        for child in root.children:
-            score = self._cosine_similarity(child.Sc, entity.Le)
-            if score >= root.score: # take all child with score >=
-                child_scores.append([child, score])
-
-        if len(child_scores) == 0:
-            return None
-
-        child_scores.sort(key=lambda x: x[1], reverse=True)
-
-        if child_scores[0][1] > root.score: # if child's highest score >
-            root.backtrack = False
-
-        for item in child_scores:
-            child = item[0]
-            self.traverse_with_blocking(child, entity)
-            if not child.backtrack: # no need to traverse in rest of the subtrees(children)
-                root.backtrack = False
-                return None
-
+        root.visited_for = entity
         return None
 
 
@@ -432,8 +417,8 @@ class Scoring:
 
     def run_analysis(self):
 
-        for alpha in [.2,.3,.4]:#[x*.1 for x in range(1, 9)]:
-            for beta in [0]: #[x*.1 for x in range(2, 9, 2)]:
+        for alpha in [.4]:#[x*.1 for x in range(1, 9)]:
+            for beta in [.6]: #[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
@@ -447,7 +432,12 @@ class Scoring:
         return None
 
     def predict_analysis(self):
+        count = 0
         for entity in self.non_seeds:
+            count += 1
+            if count % 50 == 0:
+                print(f'done:{count}/{len(self.non_seeds)}')
+            entity.score = -2
             self.traverse_all_Rc(self.root, entity)
             linear_p = entity.predicted_class
 
@@ -455,10 +445,13 @@ class Scoring:
             self.traverse_greedy(self.root, entity)
             tree_p = entity.predicted_class
 
+            if entity not in linear_p.all_entities and entity not in tree_p.all_entities:
+                continue
+
             if linear_p == tree_p:
                 continue
 
-            print(f'entity:{entity.ID,entity.raw_label} tree predicted class:{tree.raw_label}, linear predicted class:{linear.raw_label}')
+            print(f'entity:{entity.ID,entity.raw_label} tree predicted class:{tree_p.raw_label}, linear predicted class:{linear_p.raw_label}')
 
             if entity in linear_p.all_entities:
                 print(f'entity:{entity.ID,entity.raw_label} predicted correctly with linear search but not with tree search')
@@ -467,22 +460,25 @@ class Scoring:
                 print(f'entity:{entity.ID,entity.raw_label} predicted correctly with tree search but not with linear search')
                 continue
 
-            entity.score = -2
             path_p = linear_p
             while path_p != self.root:
                 path_p.in_path = True
                 path_p = path_p.parents[0]
 
+            entity.score = -2
+            self.ext = False
             self.traverse_analysis(self.root, entity)
 
             path_p = linear_p
             while path_p != self.root:
                 path_p.in_path = False
-
+                path_p = path_p.parents[0]
 
         return
 
     def traverse_analysis(self, root, entity):    # traverse all children with high score. don't block backtrack.
+        if self.ext:
+            return
         score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
         entity.visited_classes += 1
         if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
@@ -497,5 +493,10 @@ class Scoring:
             child_score = self._cosine_similarity(child.Sc, entity.Le)
             if child_score >= score: # take all child with score >=
                 self.traverse_greedy(child, entity)
+            elif child.in_path:
+                print(f'Deviating from path')
+                self.ext = True
+
 
         return None
+

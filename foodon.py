@@ -183,7 +183,7 @@ class FoodOn:
         digraph_seeded = (self.class_dict, list(non_seeds))
         # print('Saving seeded digraph to file: %s', self.digraph_seeded_pkl)
         # save_pkl(digraph_seeded, self.digraph_seeded_pkl)
-        print('Found %d non-seed entities to populate out of %d all entities.' % (len(non_seeds), len(self.all_entities)))
+        print('seeds %d, Found %d non-seed entities to populate out of %d all entities.' % (len(seeds), len(non_seeds), len(self.all_entities)))
         return digraph_seeded
 
 
@@ -199,6 +199,8 @@ class FoodOn:
             non_seeds=non_seed_entities)    # entity assumed to belongs to one class.
 
         scoring.run_config()
+        # scoring.run_analysis()
+
         return
 
 """
@@ -223,6 +225,8 @@ class Class:
         self.Rc_sum = None  # sum of all Rc vectors of subclasses whith non-zero entities.
         self.Rc_count = 0   # count of all the classes in subtree with non-zero entities.
         self.in_path = False
+        self.pre_proc = False   # vector Rc, Sc computed.
+        self.visited_for = None
 
 class Entity:
     def __init__(self, ID):

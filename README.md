@@ -66,3 +66,6 @@ then take array of sibling vectors and array of entities do vector multiplicatio
 
 
 Don't fix the seed number of seed instances take it as 5-10% percent etc.
+
+
+sometimes result defer by 4% because of random seeds.(bad seed selection cause this may be for any particular class)
