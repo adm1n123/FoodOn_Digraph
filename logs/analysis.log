@@ -6,10 +6,10 @@ Found 10897 entities.
 Generating Digraph
 Seeding digraph.
 Classes without entities: 326, classes with entities: 2439
-seeds 3493, Found 7404 non-seed entities to populate out of 10897 all entities.
-Loading word2vec...Elapsed time 1.50 minutes
-Elapsed time for getting class label vectors 0.21 minutes
-Elapsed time for getting entity label vectors 0.67 minutes
+seeds 3482, Found 7415 non-seed entities to populate out of 10897 all entities.
+Loading word2vec...Elapsed time 1.08 minutes
+Elapsed time for getting class label vectors 0.13 minutes
+Elapsed time for getting entity label vectors 0.40 minutes
 
 
 Running config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...
@@ -19,13 +19,13 @@ running post_order_traversal for Rc, Sc computation.
 
 Traversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc
 
- Total entities predicted: 7404/7404
-Failed to predict:0 entities, Average number of classes visited for prediction:105.1
-Precision is: 0.211, TP: 1555, TP+FP:7375
+ Total entities predicted: 7415/7415
+Failed to predict:0 entities, Average number of classes visited for prediction:188.6
+Precision is: 0.275, TP: 2029, TP+FP:7388
 Could not predict:0 entities, 0 entities predicted to class without entity
- Average path length between actual and predicted class: 6.05, for 7404 entities, max_length: 16
-alpha: 0.4, beta: 0.6, prec: 0.211
-Elapsed time for running config search 3.37 minutes
-alpha: 0.4, beta: 0.6, precision: 0.211
+ Average path length between actual and predicted class: 5.34, for 7415 entities, max_length: 16
+alpha: 0.4, beta: 0.6, prec: 0.275
+Elapsed time for running config search 3.53 minutes
+alpha: 0.4, beta: 0.6, precision: 0.275
 
 Process finished with exit code 0

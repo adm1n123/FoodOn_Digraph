@@ -239,7 +239,7 @@ class Scoring:
         score = self._cosine_similarity(root.Sc, entity.Le)
         for child in root.children:
             child_score = self._cosine_similarity(child.Sc, entity.Le)
-            if child_score >= score: # take all child with score >=
+            if child_score >= score or root == self.root: # take all child with score >=, and consider all child of root.
                 self.traverse_greedy(child, entity)
 
         root.visited_for = entity
