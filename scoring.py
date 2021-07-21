@@ -120,10 +120,11 @@ class Scoring:
 
     def precompute_tree_nodes(self):
         print(f'Root is: {self.root.ID}')
-        self.post_order_traversal(self.root, depth=0)
-        print(f'Removing multiple parents')
+        # self.post_order_traversal(self.root, depth=0)
+        # print(f'Removing multiple parents')
         # self.remove_multiple_parents()
-        # self.post_order_traversal_avg_Rc(self.root)
+        print('\nUsing Rc_sum as Sc')
+        self.post_order_traversal_avg_Rc(self.root)
         return None
 
 
@@ -448,26 +449,36 @@ class Scoring:
     def predict_analysis(self):
         for entity in self.non_seeds:
             self.traverse_all_Rc(self.root, entity)
-            linear = entity.predicted_class
+            linear_p = entity.predicted_class
 
             entity.score = -2
             self.traverse_greedy(self.root, entity)
-            tree = entity.predicted_class
+            tree_p = entity.predicted_class
 
-            if linear == tree:
+            if linear_p == tree_p:
                 continue
 
             print(f'entity:{entity.ID,entity.raw_label} tree predicted class:{tree.raw_label}, linear predicted class:{linear.raw_label}')
 
-            if entity in linear.all_entities:
+            if entity in linear_p.all_entities:
                 print(f'entity:{entity.ID,entity.raw_label} predicted correctly with linear search but not with tree search')
 
-            if entity in tree.all_entities:
+            if entity in tree_p.all_entities:
                 print(f'entity:{entity.ID,entity.raw_label} predicted correctly with tree search but not with linear search')
                 continue
 
             entity.score = -2
+            path_p = linear_p
+            while path_p != self.root:
+                path_p.in_path = True
+                path_p = path_p.parents[0]
+
             self.traverse_analysis(self.root, entity)
+
+            path_p = linear_p
+            while path_p != self.root:
+                path_p.in_path = False
+
 
         return
 
