@@ -222,6 +222,7 @@ class Class:
         self.visited = 0
         self.Rc_sum = None  # sum of all Rc vectors of subclasses whith non-zero entities.
         self.Rc_count = 0   # count of all the classes in subtree with non-zero entities.
+        self.in_path = False
 
 class Entity:
     def __init__(self, ID):

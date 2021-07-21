@@ -96,8 +96,8 @@ class Scoring:
         print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
         self.print_stats()
 
-        for alpha in [.4, .5, .6]:#[x*.1 for x in range(1, 9)]:
-            for beta in [0]: #[x*.1 for x in range(2, 9, 2)]:
+        for alpha in [.2, .4, .6]:#[x*.1 for x in range(1, 9)]:
+            for beta in [.6, .4, .8]: #[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
@@ -172,12 +172,12 @@ class Scoring:
         failed = 0
         count = 0
         visited_classes = 0
-        print('\n Traversing_all_classes_Rc\n')
-        # print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
+        # print('\n Traversing_all_classes_Rc\n')
+        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
-            self.traverse_all_Rc(self.root, entity)
-            # self.traverse_greedy(self.root, entity)
+            # self.traverse_all_Rc(self.root, entity)
+            self.traverse_greedy(self.root, entity)
             visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
 
@@ -454,5 +454,37 @@ class Scoring:
             self.traverse_greedy(self.root, entity)
             tree = entity.predicted_class
 
+            if linear == tree:
+                continue
+
+            print(f'entity:{entity.ID,entity.raw_label} tree predicted class:{tree.raw_label}, linear predicted class:{linear.raw_label}')
+
+            if entity in linear.all_entities:
+                print(f'entity:{entity.ID,entity.raw_label} predicted correctly with linear search but not with tree search')
+
+            if entity in tree.all_entities:
+                print(f'entity:{entity.ID,entity.raw_label} predicted correctly with tree search but not with linear search')
+                continue
+
+            entity.score = -2
+            self.traverse_analysis(self.root, entity)
 
         return
+
+    def traverse_analysis(self, root, entity):    # traverse all children with high score. don't block backtrack.
+        score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
+        entity.visited_classes += 1
+        if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
+            entity.score = score
+            entity.predicted_class = root
+
+        if len(root.children) == 0:
+            return None
+
+        score = self._cosine_similarity(root.Sc, entity.Le)
+        for child in root.children:
+            child_score = self._cosine_similarity(child.Sc, entity.Le)
+            if child_score >= score: # take all child with score >=
+                self.traverse_greedy(child, entity)
+
+        return None
