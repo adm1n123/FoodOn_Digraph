@@ -103,7 +103,7 @@ class Scoring:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
-                self.bias = .1
+                self.bias = .05
 
                 self.precompute_tree_nodes()
                 self.predict_entity()
