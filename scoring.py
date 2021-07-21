@@ -24,7 +24,7 @@ class Scoring:
 
         self.alpha = 0.8    # for Rc
         self.beta = 0.5     # for Sc
-
+        self.bias = 0      # for childscore + bias >= parent score.
 
         t1 = time()
         print('Loading word2vec...', end='')
@@ -103,6 +103,7 @@ class Scoring:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
+                self.bias = .1
 
                 self.precompute_tree_nodes()
                 self.predict_entity()
@@ -190,7 +191,7 @@ class Scoring:
         for entity in self.non_seeds:
             entity.score = -2
             # self.traverse_all_Rc(self.root, entity)
-            self.traverse_greedy(self.root, entity)
+            self.traverse_greedy(self.root, entity, 0)
             visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
 
@@ -223,7 +224,7 @@ class Scoring:
         return None
 
 
-    def traverse_greedy(self, root, entity):    # traverse all children with high score. don't block backtrack.
+    def traverse_greedy(self, root, entity, max_path_score):    # traverse all children with high score. don't block backtrack.
         if root.visited_for == entity:  # don't visited same node for same entity.
             return
 
@@ -237,10 +238,12 @@ class Scoring:
             return
 
         score = self._cosine_similarity(root.Sc, entity.Le)
+        max_path_score = score if len(root.children) > 0 and score > max_path_score else max_path_score
+
         for child in root.children:
             child_score = self._cosine_similarity(child.Sc, entity.Le)
-            if child_score >= score or root == self.root: # take all child with score >=, and consider all child of root.
-                self.traverse_greedy(child, entity)
+            if child_score + self.bias >= max_path_score or root == self.root: # take all child with score >=, and consider all child of root.
+                self.traverse_greedy(child, entity, max_path_score)
 
         root.visited_for = entity
         return None
