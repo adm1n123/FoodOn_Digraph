@@ -95,7 +95,7 @@ class Scoring:
     def run_config(self):
         t1 = time()
         prec = []
-        print('\n\nRunning config α * Lc + (1-α) * sibling,  β * Sc + (1-β) * children...')
+        print('\n\nRunning config α * Lc + (1-α) * seeds,  β * Sc + (1-β) * children(Sc avg)')
         self.print_stats()
 
         for alpha in [.4]:#[x*.1 for x in range(1, 9)]:
@@ -103,7 +103,7 @@ class Scoring:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
-                self.bias = .05
+                self.bias = .08
 
                 self.precompute_tree_nodes()
                 self.predict_entity()

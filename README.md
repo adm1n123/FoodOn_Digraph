@@ -71,24 +71,19 @@ Don't fix the seed number of seed instances take it as 5-10% percent etc.
 sometimes result defer by 4% because of random seeds.(bad seed selection cause this may be for any particular class)
 
 
-Stats:
+Stats:  (alpha .4, beta .6), score = [α * Lc + (1-α) * seeds,  β * Sc + (1-β) * children(Sc avg)]
 
-Considering all children of root(foodon product type)   (alpha .4, beta .6)
+Considering all children of root(foodon product type)   
 Predicted   Traversed   Avg node(visited)   bias    Precision
 Rc          Sc(Rc_sum)  30                  0       20%
 Rc          Sc          537                 .05     31%
 Rc          Sc          1127                .1      33%
 Rc          Sc          188                 0       27%
 Rc          Sc(Rc_sum)  154                 .05     32.9%
+Rc          Sc(Rc_sum)  310                 .08     33.4
 
 
-
-
-
-
-
-
-Not considering all children of root(foodon product type) (alpha .4, beta .6)
+Not considering all children of root(foodon product type)
 Predicted   Traversed   Avg node(visited)   bias    Precision
 Rc          Sc          100                 0       20% (sometimes 16% due to random seeds)
 Rc          Sc(Rc_sum)                      0       14%
