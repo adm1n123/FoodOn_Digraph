@@ -103,7 +103,7 @@ class Scoring:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
-                self.bias = 0
+                self.bias = .05
 
                 self.precompute_tree_nodes()
                 self.predict_entity()
@@ -111,7 +111,7 @@ class Scoring:
                 p = self.calculate_precision()
                 self.find_avg_path_length()
                 prec.append([alpha, beta, p])
-                print(f'alpha: {alpha:.1f}, beta: {beta:.1f}, prec: {p:.3f}')
+                print(f'alpha: {alpha:.1f}, beta: {beta:.1f}, bias: {self.bias}, prec: {p:.3f}')
         t2 = time()
         print('Elapsed time for running config search %.2f minutes' % ((t2 - t1) / 60))
         prec.sort(key=lambda x: x[2], reverse=True)

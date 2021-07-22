@@ -69,3 +69,55 @@ Don't fix the seed number of seed instances take it as 5-10% percent etc.
 
 
 sometimes result defer by 4% because of random seeds.(bad seed selection cause this may be for any particular class)
+
+
+Stats:
+
+Considering all children of root(foodon product type)   (alpha .4, beta .6)
+Predicted   Traversed   Avg node(visited)   bias    Precision
+Rc          Sc(Rc_sum)  30                  0       20%
+Rc          Sc          537                 .05     31%
+Rc          Sc          1127                .1      33%
+Rc          Sc          188                 0       27%
+Rc          Sc(Rc_sum)  154                 .05     32.9%
+
+
+
+
+
+
+
+
+Not considering all children of root(foodon product type) (alpha .4, beta .6)
+Predicted   Traversed   Avg node(visited)   bias    Precision
+Rc          Sc          100                 0       20% (sometimes 16% due to random seeds)
+Rc          Sc(Rc_sum)                      0       14%
+
+
+
+
+Traversing all node(brute force) (alpha .4, beta .6)
+precision 35%
+
+Before bug fixes(some seed were also in non-seeds) (alpha .4, beta .6)
+precision 38%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
