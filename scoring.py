@@ -103,7 +103,7 @@ class Scoring:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
-                self.bias = .05
+                self.bias = 0
 
                 self.precompute_tree_nodes()
                 self.predict_entity()
@@ -123,12 +123,12 @@ class Scoring:
 
     def precompute_tree_nodes(self):
         print(f'Root is: {self.root.ID}')
-        print(f'running post_order_traversal for Rc, Sc computation.')
-        self.post_order_traversal(self.root, depth=0)
+        # print(f'running post_order_traversal for Rc, Sc computation.')
+        # self.post_order_traversal(self.root, depth=0)
         # print(f'Removing multiple parents')
         # self.remove_multiple_parents()
-        # print('\nUsing Rc_sum as Sc')
-        # self.post_order_traversal_avg_Rc(self.root)
+        print('\nUsing Rc_sum as Sc')
+        self.post_order_traversal_avg_Rc(self.root)
         return None
 
 
@@ -242,7 +242,7 @@ class Scoring:
 
         for child in root.children:
             child_score = self._cosine_similarity(child.Sc, entity.Le)
-            if child_score + self.bias >= max_path_score or root == self.root: # take all child with score >=, and consider all child of root.
+            if child_score + self.bias >= max_path_score or root == self.root: # take all child with score >=, and consider all children of root.
                 self.traverse_greedy(child, entity, max_path_score)
 
         root.visited_for = entity
