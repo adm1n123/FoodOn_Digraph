@@ -73,17 +73,27 @@ sometimes result defer by 4% because of random seeds.(bad seed selection cause t
 
 Stats:  (alpha .4, beta .6), score = [α * Lc + (1-α) * seeds,  β * Sc + (1-β) * children(Sc avg)]
 
-Considering all children of root(foodon product type)   
+Ra = La  + Seed_a
+Sa = Sb + Sc
+Rs_a = Ra + Rb + Rc + Rd + Re + Rf + Rg
+Sd = Rd
+
+
+
+==> Considering all children of root(foodon product type)   
 Predicted   Traversed   Avg node(visited)   bias    Precision
-Rc          Sc(Rc_sum)  30                  0       20%
+Rc          Rc_sum      30                  0       20%
+Rc          Rc_sum      154                 .05     32.9%
+Rc          Rc_sum      310                 .08     33.4
+Rc          Rc_sum      251                 .08     34.2
 Rc          Sc          537                 .05     31%
 Rc          Sc          1127                .1      33%
 Rc          Sc          188                 0       27%
-Rc          Sc(Rc_sum)  154                 .05     32.9%
-Rc          Sc(Rc_sum)  310                 .08     33.4
 
 
-Not considering all children of root(foodon product type)
+Rc = 
+
+==> Not considering all children of root(foodon product type)
 Predicted   Traversed   Avg node(visited)   bias    Precision
 Rc          Sc          100                 0       20% (sometimes 16% due to random seeds)
 Rc          Sc(Rc_sum)                      0       14%

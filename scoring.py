@@ -238,7 +238,7 @@ class Scoring:
             return
 
         score = self._cosine_similarity(root.Sc, entity.Le)
-        max_path_score = score if len(root.children) > 0 and score > max_path_score else max_path_score
+        max_path_score = score if score > max_path_score else max_path_score
 
         for child in root.children:
             child_score = self._cosine_similarity(child.Sc, entity.Le)
@@ -287,10 +287,14 @@ class Scoring:
             except KeyError:
                 pass
             else:
-                if pos == 'NN': # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
+                if pos in ['NN', 'NNS', 'NNP']: # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
                     multiplier = 1.15
                 else:
                     multiplier = 1
+                if word in ['dry', 'dried', 'slice', 'sliced', 'fried', 'fry', 'process', 'frozen', 'mix', 'cook', 'cooked', 'diced','glazed', 'food', 'product']:
+                    multiplier = 0
+                    num_found_words -= 1
+
                 label_embedding += (multiplier * word_embedding)    # increase vector magnitude if noun.
                 num_found_words += 1
 
@@ -503,3 +507,25 @@ class Scoring:
 
         return None
 
+    def bad_precision(self):
+        for entity in self.non_seeds:
+            if not np.any(entity.Le):   # ignore entities without labels
+                continue
+            elif entity.predicted_class is None:    # coud not predict class good to put them
+                continue
+            elif entity not in entity.predicted_class.all_entities:
+
+                c_class = entity.parents[0]
+                all = len(c_class.all_entities)
+                if all < 5:
+                    continue
+                pred_e = len(c_class.predicted_entities)
+                if pred_e < all/2:  # if predicted entities are less than half then correct entities are definitely less.
+                    if entity.raw_label in ['crabmeat (processed)', 'pineapple (immature, sliced, in brine)', 'frozen nondairy frosting',
+                                            'frozen nondairy topping', 'beverage prepared from dry mix', 'fruit (dried, diced, and glazed)',
+                                            'dessert mix, dry', 'vegetable (processed)', 'sugar cane (unrefined)', 'crabmeat (cooked, canned)',
+                                            'chickpea (cooked, canned)']:
+                        z = 2+3
+
+                    c_score = self._cosine_similarity(entity.Le, c_class.Rc)
+                    print(f'entity: {entity.raw_label} not predicted correctly. correct class: {c_class.raw_label} score: {c_score:.2f}, predicted class: {entity.predicted_class.raw_label}, score: {entity.score:.2f}')

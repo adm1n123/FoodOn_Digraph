@@ -200,7 +200,7 @@ class FoodOn:
 
         scoring.run_config()
         # scoring.run_analysis()
-
+        scoring.bad_precision()
         return
 
 """
