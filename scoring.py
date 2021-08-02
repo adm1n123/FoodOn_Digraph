@@ -1,6 +1,7 @@
 import multiprocessing
 
 import nltk
+from nltk.tree import Tree
 import pandas as pd
 import numpy as np
 from fdc_preprocess import FDCPreprocess
@@ -186,12 +187,12 @@ class Scoring:
         failed = 0
         count = 0
         visited_classes = 0
-        # print('\n Traversing_all_classes_Rc\n')
-        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
+        print('\n Traversing_all_classes_Rc\n')
+        # print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
-            # self.traverse_all_Rc(self.root, entity)
-            self.traverse_greedy(self.root, entity, 0)
+            self.traverse_all_Rc(self.root, entity)
+            # self.traverse_greedy(self.root, entity, 0)
             visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
 
@@ -274,11 +275,49 @@ class Scoring:
         else:
             return np.copy(node.Rc)
 
+    def find_noun_phrases(self, tree):
+        return [subtree for subtree in tree.subtrees(lambda t: t.label() == 'NP')]
+
+    def find_head_of_np(self, np):
+        noun_tags = ['NN', 'NNS', 'NNP', 'NNPS']
+        top_level_trees = [np[i] for i in range(len(np)) if type(np[i]) is Tree]
+        ## search for a top-level noun
+        top_level_nouns = [t for t in top_level_trees if t.label() in noun_tags]
+        if len(top_level_nouns) > 0:
+            ## if you find some, pick the rightmost one, just 'cause
+            return top_level_nouns[-1][0]
+        else:
+            ## search for a top-level np
+            top_level_nps = [t for t in top_level_trees if t.label() == 'NP']
+            if len(top_level_nps) > 0:
+                ## if you find some, pick the head of the rightmost one, just 'cause
+                return self.find_head_of_np(top_level_nps[-1])
+            else:
+                ## search for any noun
+                nouns = [p[0] for p in np.pos() if p[1] in noun_tags]
+                if len(nouns) > 0:
+                    ## if you find some, pick the rightmost one, just 'cause
+                    return nouns[-1]
+                else:
+                    ## return the rightmost word, just 'cause
+                    return np.leaves()[-1]
+
+    def get_head(self, label):
+        grammar = "NP: {<DT>?<JJ>*<NN>}"
+        cp = nltk.RegexpParser(grammar)
+        result = cp.parse(nltk.pos_tag(nltk.word_tokenize(label)))
+        # tree = Tree(result)
+        for np in self.find_noun_phrases(result):
+            head = self.find_head_of_np(np)
+            if head is not None:
+                return head[0]
+
 
     def _caculate_embeddings(self, label):  # for a label take weighted average of word vectors.
         label_embedding = 0
         num_found_words = 0
-
+        flag = True
+        # head = self.get_head(label)
         for word, pos in nltk.pos_tag(label.split(' ')):
             # if word in ['food', 'product']:
             #     continue

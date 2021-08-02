@@ -89,7 +89,7 @@ Rc          Rc_sum      251                 .08     34.2
 Rc          Sc          537                 .05     31%
 Rc          Sc          1127                .1      33%
 Rc          Sc          188                 0       27%
-
+Rc          -           all                         35.6%
 
 Rc = 
 
