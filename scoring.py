@@ -355,7 +355,7 @@ class Scoring:
         if num_found_words == 0:
             return np.zeros(self.vec_dim)
         else:
-            if 0.01 < self._cosine_similarity(self.keyed_vectors.get_vector('food'), label_embedding/num_found_words) < .3:
+            if 0.01 < self._cosine_similarity(self.keyed_vectors.get_vector('food'), label_embedding/num_found_words) < .5:
                 label_embedding += self.keyed_vectors.get_vector('food')
                 num_found_words += 1
             return label_embedding / num_found_words
