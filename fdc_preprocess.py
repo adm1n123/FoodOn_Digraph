@@ -75,7 +75,7 @@ class FDCPreprocess:
         stopwords = self.generate_stopwords()
         filters.append(lambda x: self.remove_stopwords(x, stopwords))
         filters.append(lambda x: gpp.strip_short(x, minsize=self.strip_short_size))
-        filters.append(self.lemmatize)
+        # filters.append(self.lemmatize)
         return filters
 
     def load_synonym_dict(self):

@@ -139,6 +139,13 @@ class Scoring:
 
         root.Rc = self._Rc(root)
 
+        # if len(root.parents) > 0:
+        #     for parent in root.parents:
+        #         if parent.Rc is not None:
+        #             # print(f'root: is{root.ID}, name: {root.raw_label}')
+        #             root.Rc = .9 * root.Rc + .1 * parent.Rc
+        #             break
+
         if len(root.all_entities) == 0:
             root.Rc_count = 0
             root.Rc_sum = np.zeros(self.vec_dim)
@@ -187,12 +194,12 @@ class Scoring:
         failed = 0
         count = 0
         visited_classes = 0
-        print('\n Traversing_all_classes_Rc\n')
-        # print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
+        # print('\n Traversing_all_classes_Rc\n')
+        print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -2
-            self.traverse_all_Rc(self.root, entity)
-            # self.traverse_greedy(self.root, entity, 0)
+            # self.traverse_all_Rc(self.root, entity)
+            self.traverse_greedy(self.root, entity, 0)
             visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
 
@@ -316,11 +323,14 @@ class Scoring:
     def _caculate_embeddings(self, label):  # for a label take weighted average of word vectors.
         label_embedding = 0
         num_found_words = 0
-        flag = True
+        flag = False
         # head = self.get_head(label)
         for word, pos in nltk.pos_tag(label.split(' ')):
             # if word in ['food', 'product']:
             #     continue
+            if word == 'food':
+                flag = True
+
             try:
                 word_embedding = self.keyed_vectors.get_vector(word)
             except KeyError:
@@ -331,15 +341,23 @@ class Scoring:
                 else:
                     multiplier = 1
                 if word in ['dry', 'dried', 'slice', 'sliced', 'fried', 'fry', 'process', 'frozen', 'mix', 'cook', 'cooked', 'diced','glazed', 'food', 'product']:
-                    multiplier = 0
-                    num_found_words -= 1
+                    continue
+                    # multiplier = .2
+                    # num_found_words -= 1
+                # if head == word:
+                #     multiplier = 1.8
 
                 label_embedding += (multiplier * word_embedding)    # increase vector magnitude if noun.
                 num_found_words += 1
 
+
+
         if num_found_words == 0:
             return np.zeros(self.vec_dim)
         else:
+            if 0.01 < self._cosine_similarity(self.keyed_vectors.get_vector('food'), label_embedding/num_found_words) < .3:
+                label_embedding += self.keyed_vectors.get_vector('food')
+                num_found_words += 1
             return label_embedding / num_found_words
 
     def _calculate_label_embeddings(self, index_list):  # make label an index.

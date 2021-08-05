@@ -9,7 +9,8 @@ from scoring import Scoring
 class FoodOn:
     """
     TODO: classes at leaf without entities are treated as entities. since they are not parent of any. It does not affect
-    TODO: precision because those classes treated as entities in both candidate and skeleton candidate dict.
+    TODO: precision because those classes treated as entities in both candidate and skeleton candidate dict. what is the
+    TODO: use of leaf class without entity, It should not be created.
     """
 
 
@@ -227,6 +228,7 @@ class Class:
         self.in_path = False
         self.pre_proc = False   # vector Rc, Sc computed.
         self.visited_for = None
+        self.Rc_rmv = None # not used
 
 class Entity:
     def __init__(self, ID):
