@@ -99,8 +99,8 @@ class Scoring:
         print('\n\nRunning config α * Lc + (1-α) * seeds,  β * Sc + (1-β) * children(Sc avg)')
         self.print_stats()
 
-        for alpha in [.4]:#[x*.1 for x in range(1, 9)]:
-            for beta in [.6]: #[x*.1 for x in range(2, 9, 2)]:
+        for alpha in [.2, .4, .6]:#[x*.1 for x in range(1, 9)]:
+            for beta in [.4, .6, .8]: #[x*.1 for x in range(2, 9, 2)]:
                 self.reset_nodes()
                 self.alpha = alpha
                 self.beta = beta
