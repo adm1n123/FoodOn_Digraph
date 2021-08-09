@@ -228,6 +228,9 @@ class Class:
         self.in_path = False
         self.pre_proc = False   # vector Rc, Sc computed.
         self.visited_for = None
+
+        self.Lc_rmv = None
+        self.label_rmv = None
         self.Rc_rmv = None # not used
 
 class Entity:
@@ -240,4 +243,8 @@ class Entity:
         self.predicted_class = None
         self.parents = []  # all parent classes
         self.visited_classes = 0
+
+        self.Le_rmv = None
+        self.label_rmv = None
+
 
