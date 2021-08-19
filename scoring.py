@@ -16,17 +16,16 @@ class Scoring:
     TODO: don't consider entities without embeddings ignore them during precision calculation
     """
     def __init__(self, root, class_dict, entity_dict, non_seeds):
-        # from foodon import Class
-        # self.root = Class()
         self.root = root
         self.class_dict = class_dict
         self.entity_dict = entity_dict
         self.non_seeds = non_seeds
 
-        self.alpha = 0.8    # for Rc
-        self.beta = 0.5     # for Sc
-        self.bias = 0      # for childscore + bias >= parent score.
+        self.alpha = 0.4    # for Rc
+        self.beta = 0.6     # for Sc
+        self.bias = 0.08      # for childscore + bias >= parent score.
         self.isRmv = False
+        self.isEntity = False
 
         t1 = time()
         print('Loading word2vec...', end='')
@@ -50,8 +49,8 @@ class Scoring:
             node.Lc = row['vector']
             node.label = row['preprocessed']
 
-        self.isRmv = True
 
+        self.isRmv = True
         df_class = self._calculate_label_embeddings(class_id_labels)
         for idx, row in df_class.iterrows():
             node = self.class_dict[idx]
@@ -63,6 +62,8 @@ class Scoring:
 
 
         self.isRmv = False
+        self.isEntity = True
+
         t1 = time()
         entity_id_labels = list(
             [entity_id, self.entity_dict[entity_id].raw_label] for entity_id in self.entity_dict.keys())
@@ -95,10 +96,14 @@ class Scoring:
             node.pre_proc = False
             node.visited_for = None
 
+            node.Rc_rmv = None
+
         for _, entity in self.entity_dict.items():
             entity.score = None  # list of all the scores during traversal.
             entity.predicted_class = None
             entity.visited_classes = 0
+
+            entity.predicted_class_rmv = None
 
         return None
 
@@ -214,7 +219,8 @@ class Scoring:
         # print('\n Traversing_all_classes_Rc\n')
         print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
-            entity.score = -2
+            entity.score = -1
+            entity.score_rmv = -1
             # self.traverse_all_Rc(self.root, entity)
             self.traverse_greedy(self.root, entity, 0)
             visited_classes += entity.visited_classes
@@ -257,13 +263,17 @@ class Scoring:
         score_rmv = self._cosine_similarity(root.Rc_rmv, entity.Le_rmv)
 
         entity.visited_classes += 1
-        if (score > entity.score or score_rmv > entity.score) and len(root.all_entities) > 0:  # compare with any previous class scores
-            entity.score = max(score, score_rmv)
+        if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
+            entity.score = score
             entity.predicted_class = root
 
+        if score_rmv > max(entity.score, entity.score_rmv) and len(root.all_entities) > 0 or entity.predicted_class_rmv is None:  # compare with any previous class scores
+            entity.score_rmv = score_rmv
+            entity.predicted_class_rmv = root
 
         if len(root.children) == 0:
             return
+
 
         score = self._cosine_similarity(root.Sc, entity.Le)
         max_path_score = score if score > max_path_score else max_path_score
@@ -357,6 +367,11 @@ class Scoring:
     def _calculate_embeddings(self, label):  # for a label take weighted average of word vectors.
         label_embedding = 0
         num_found_words = 0
+        head = None
+        if self.isEntity:
+            head = self.get_head(label)
+
+        fact = 1.15 # for classes
 
         for word, pos in nltk.pos_tag(label.split(' ')):
             # if word in ['food', 'product']:
@@ -366,10 +381,20 @@ class Scoring:
             except KeyError:
                 pass
             else:
-                if pos == 'NN': # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
+                if head == word:
+                    multiplier = 1.5
+                elif pos in ['NN', 'NNS', 'NNP']:  # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
                     multiplier = 1.15
+
                 else:
                     multiplier = 1
+
+                # if not self.isEntity:
+                #     multiplier = fact
+                #     fact -= .15
+                #     if multiplier <= 0:
+                #         continue
+
                 label_embedding += (multiplier * word_embedding)    # increase vector magnitude if noun.
                 num_found_words += 1
 
@@ -409,9 +434,9 @@ class Scoring:
         if num_found_words == 0:
             return np.zeros(self.vec_dim)
         else:
-            if 0.01 < self._cosine_similarity(self.keyed_vectors.get_vector('food'), label_embedding/num_found_words) < .5:
-                label_embedding += self.keyed_vectors.get_vector('food')
-                num_found_words += 1
+            # if 0.01 < self._cosine_similarity(self.keyed_vectors.get_vector('food'), label_embedding/num_found_words) < .5:
+            #     label_embedding += self.keyed_vectors.get_vector('food')
+            #     num_found_words += 1
             return label_embedding / num_found_words
 
 
@@ -501,11 +526,6 @@ class Scoring:
         print(f' Average path length between actual and predicted class: {length/count:.2f}, for {count} entities, max_length: {max_len}')
 
 
-    def detect_cycle(self, root):
-        for child in root.children:
-            self.detect_cycle(child)
-        return None
-
     def remove_multiple_parents(self):
         for _, child in self.class_dict.items():
             if len(child.parents) == 0:
@@ -516,26 +536,6 @@ class Scoring:
             child.parents = [child.parents[0]]  # store only first parent.
 
         return
-
-    def break_cycles(self, root):   # remove cycle by depth first search so that lower level nodes could not refer back.
-        root.in_path = True
-        child_in_path = []
-        for child in root.children:
-            if child.in_path:   # how can child reached in DFS remove this cycle.
-                child_in_path.append(child)
-
-        root.children = [child for child in root.children if child not in child_in_path]    # remove child
-
-        for child in child_in_path:     # remove parent from child
-            child.parents.remove(root)
-
-        for child in root.children:
-            child.in_path = True
-            self.break_cycles(child)
-            child.in_path = False
-
-        root.in_path = False
-        return None
 
 
     def run_analysis(self):
@@ -548,8 +548,6 @@ class Scoring:
 
                 self.precompute_tree_nodes()
                 self.predict_analysis()
-
-
 
 
         return None
@@ -645,3 +643,57 @@ class Scoring:
 
                     c_score = self._cosine_similarity(entity.Le, c_class.Rc)
                     print(f'entity: {entity.raw_label} not predicted correctly. correct class: {c_class.raw_label} score: {c_score:.2f}, predicted class: {entity.predicted_class.raw_label}, score: {entity.score:.2f}')
+
+    def find_worst_classes(self):
+        print('\n\n\n\n\n')
+        for _, node in self.class_dict.items():
+            if len(node.all_entities) < 10:
+                continue
+
+            if len(set(node.all_entities)-set(node.predicted_entities+node.seed_entities)) / len(set(node.all_entities)-set(node.seed_entities)) < .2:
+                print(f'\nclass with < 20% precision class: {node.raw_label}')
+                print('seeds: ', end=' ')
+                for entity in node.seed_entities:
+                    print(f'{entity.raw_label}', end='; ')
+
+                print('\n not predicted: ', end=' ')
+                for entity in node.all_entities:
+                    if entity not in node.seed_entities and entity not in node.predicted_entities:
+                        print(f'{entity.raw_label}', end='; ')
+                print('')
+
+
+    def find_diff_old_rmv_method(self):
+        print(f'\n\n\nComparison of new and old method ')
+
+        correct_old = 0
+        correct_rmv = 0
+        correct_both = 0
+
+        incorrect_old = 0
+        incorrect_rmv = 0
+
+        for entity in self.non_seeds:
+            if not np.any(entity.Le):  # ignore entities without labels
+                continue
+            if entity.predicted_class is None or entity.predicted_class_rmv is None:  # coud not predict class good to put them
+                continue
+
+            if entity in entity.predicted_class_rmv.all_entities and entity in entity.predicted_class.all_entities:
+                correct_both += 1
+                print(f'Entity predicted correctly for both: {entity.label}:  class: {entity.predicted_class.label}')
+            elif entity in entity.predicted_class.all_entities and entity.score >= max(entity.score, entity.score_rmv):
+                correct_old += 1
+                print(f'Entity remained unchanged: {entity.label}:  class: {entity.predicted_class.label}')
+            elif entity in entity.predicted_class_rmv.all_entities and entity.score_rmv >= max(entity.score, entity.score_rmv):
+                correct_rmv += 1
+                print(f'Entity predicted correctly because of rmv: {entity.label} \ncorrect class: {entity.predicted_class_rmv.label}\n old method class:{entity.predicted_class.label}', end='\n')
+
+            if entity in entity.predicted_class.all_entities and entity.score < max(entity.score, entity.score_rmv) and entity not in entity.predicted_class_rmv.all_entities:
+                incorrect_old += 1
+                print(f'Entity predicted incorrectly because of rmv: {entity.label} \ncorrect class: {entity.predicted_class.label} \nnew method class: {entity.predicted_class_rmv.label}')
+
+
+        print(f'correct_old:{correct_old}, correct_new:{correct_rmv}, correct_common:{correct_both}, incorrect_old:{incorrect_old}')
+
+        return None

@@ -192,7 +192,6 @@ class FoodOn:
 
         class_dict, non_seed_entities = self.seed_digraph()
 
-        # TODO: run and debug before scoring see everything is fine
         scoring = Scoring(
             root=self.digraph_root,
             class_dict=class_dict,
@@ -202,6 +201,9 @@ class FoodOn:
         scoring.run_config()
         # scoring.run_analysis()
         scoring.bad_precision()
+        scoring.find_worst_classes()
+        scoring.find_diff_old_rmv_method()
+
         return
 
 """
@@ -233,6 +235,7 @@ class Class:
         self.label_rmv = None
         self.Rc_rmv = None # not used
 
+
 class Entity:
     def __init__(self, ID):
         self.ID = ID  # class id
@@ -246,5 +249,7 @@ class Entity:
 
         self.Le_rmv = None
         self.label_rmv = None
+        self.score_rmv = None
+        self.predicted_class_rmv = None
 
 
