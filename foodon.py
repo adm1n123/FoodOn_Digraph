@@ -202,7 +202,7 @@ class FoodOn:
         # scoring.run_analysis()
         scoring.bad_precision()
         scoring.find_worst_classes()
-        scoring.find_diff_old_rmv_method()
+        # scoring.find_diff_old_rmv_method()
 
         return
 
@@ -221,7 +221,6 @@ class Class:
         self.seed_entities = [] # seed entities for this class
         self.predicted_entities = []    # predicted entities for this class
         self.all_entities = []  # all entities in this class
-        self.backtrack = None    # can backtrack store the entity id or iteration number if iteration no == this iteration then do not backtrack.
         self.children = []  # all child subclasses(not entities)
         self.parents = []    # all parents
         self.visited = 0
@@ -230,10 +229,6 @@ class Class:
         self.in_path = False
         self.pre_proc = False   # vector Rc, Sc computed.
         self.visited_for = None
-
-        self.Lc_rmv = None
-        self.label_rmv = None
-        self.Rc_rmv = None # not used
 
 
 class Entity:
@@ -247,9 +242,5 @@ class Entity:
         self.parents = []  # all parent classes
         self.visited_classes = 0
 
-        self.Le_rmv = None
-        self.label_rmv = None
-        self.score_rmv = None
-        self.predicted_class_rmv = None
 
 

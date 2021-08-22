@@ -1,4 +1,14 @@
 query
+http purl obolibrary organic obo genepio
+ncit
+obolibrary
+swirl
+http purl obolibrary organic obo foodon
+chebi
+genepio
+http purl obolibrary organic obo ncit
+http purl obolibrary organic obo chebi
+http purl obolibrary organic obo uberon
 Norse
 chela
 meretricious

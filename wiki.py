@@ -15,10 +15,11 @@ class Wikipedia:
     """
 
     def __init__(self):
+        self.skip_query = True
         self.reuse_summary = True
         self.failed_query_file = 'data/wikipedia/failed_queries.txt'
         self.summary_file = 'data/wikipedia/summaries.txt'
-        self.summary_preprocessed_file = 'output/wikipedia_preprocessed.txt'
+        self.summary_preprocessed_file = 'output/wikipedia_preprocessed_phrases.txt'
         self.foodon_pairs_file = 'data/FoodOn/foodonpairs.txt'
         self.max_query_in_run = 1000    # number of queries to fire in one run and save summary.
 
@@ -27,17 +28,19 @@ class Wikipedia:
         # take all the labels(vocab) to query wikipedia
         labels = []
         df = pd.read_csv(self.foodon_pairs_file, sep='\t')
-        labels.extend(df['Parent'].tolist())
-        labels.extend(df['Child'].tolist())
+        labels.extend(df['Parent_label'].tolist())
+        labels.extend(df['Child_label'].tolist())
         labels = list(set(labels))
 
+
         fdc_preprocess = FDCPreprocess()
-        processed_labels = fdc_preprocess.preprocess_columns(pd.Series(labels)).tolist()
+        processed_labels = fdc_preprocess.preprocess_columns(pd.Series(labels), load_phrase_model=False, generate_phrase=True).tolist()
         queries = processed_labels.copy()   # queries have all the labels now split each label to get more queries
         for label in processed_labels:
             queries.extend(label.split())
         queries = list(set(queries))
         queries = self.extend_queries(queries)
+
 
         if self.reuse_summary and os.path.isfile(self.summary_file) and os.path.isfile(self.failed_query_file):
             summary_file = self.summary_file
@@ -48,8 +51,9 @@ class Wikipedia:
         summary_df, failed_df = self.query_summary(queries, summary_file, failed_query_file)
         summary_df.to_csv(self.summary_file, sep='\t', index=False)
         failed_df.to_csv(self.failed_query_file, sep='\t', index=False)
-        summary_df['summary_preprocessed'] = fdc_preprocess.preprocess_columns(summary_df['summary'], load_phrase_model=True)   # load_phrase_model=True. use phrases for food labels don't make phrases for wiki contents.
+        summary_df['summary_preprocessed'] = fdc_preprocess.preprocess_columns(summary_df['summary'], load_phrase_model=True, generate_phrase=True)   # load_phrase_model=True. use phrases for food labels don't make phrases for wiki contents.
         summary_df.to_csv(self.summary_preprocessed_file, sep='\t', index=False)
+
 
     def extend_queries(self, queries):   # use wordnet to add synonyms of words
         print(f'Number of queries: {len(queries)}')
@@ -69,6 +73,9 @@ class Wikipedia:
             print('Reusing previous summaries.')
             pd_prev_summaries = pd.read_csv(summary_file, sep='\t', keep_default_na=False)
             pd_prev_failed = pd.read_csv(failed_query_file, sep='\t', keep_default_na=False)
+
+            if self.skip_query:
+                return pd_prev_summaries, pd_prev_failed
 
             known_successful_queries = pd_prev_summaries['query'].tolist()
             known_failed_queries = pd_prev_failed['query'].tolist()

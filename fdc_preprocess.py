@@ -9,7 +9,7 @@ from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 # nltk.download('averaged_perceptron_tagger')
 # nltk.download("wordnet")
-
+from utils.utilities import file_exists
 
 class FDCPreprocess:
 
@@ -20,7 +20,6 @@ class FDCPreprocess:
         self.strip_short_size = 3   # remove word with length less than this
 
         # for Phrases generation
-        self.generate_phrase = False
         self.min_count = 5
         self.threshold = 10.0   # minimum score to be phrase
         self.max_vocab_size = 40000000
@@ -29,21 +28,26 @@ class FDCPreprocess:
         self.phrase_model_file = 'data/model/phrase_model.pkl'
         self.phrase_dump_file = 'output/phrases.txt'
 
-    def preprocess_columns(self, pd_series, load_phrase_model=False):
+
+    def preprocess_columns(self, pd_series, load_phrase_model=False, generate_phrase=False):
         custom_filters = self.custom_filters()
         pd_series_processed = pd_series.apply(lambda x: gpp.preprocess_string(x, custom_filters), convert_dtype=False)
-        pd_series_phrases = self.generate_phrases(pd_series_processed, load_phrase_model)
+        pd_series_phrases = self.generate_phrases(pd_series_processed, load_phrase_model, generate_phrase)
         return pd_series_phrases.apply(lambda x: ' '.join(x))
 
-    def generate_phrases(self, pd_series, load_model=False):  # pd_series is series of list of words.
+
+    def generate_phrases(self, pd_series, load_model, generate_phrase):  # pd_series is series of list of words.
         sentences = pd_series.tolist()
-        if not self.generate_phrase:
-            # print('Phrase detection skipped')
+        if not generate_phrase:
+            print('Phrase detection skipped')
             return pd_series
-        if load_model:
+
+        print('Detecting phrase')
+        if load_model and file_exists(self.phrase_model_file):
             model = Phraser.load(self.phrase_model_file)
             pd_series = pd_series.apply(lambda x: model[x], convert_dtype=False)
             return pd_series
+        print('Generating phrases')
         # detect bi-gram phrases
         model = Phrases(    # supplied parameters are default values in gensim
             sentences,  # list of list of words. (each sentence should be list of words)

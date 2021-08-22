@@ -9,8 +9,6 @@ from gensim.models import KeyedVectors
 from time import time
 
 
-
-
 class Scoring:
     """
     TODO: don't consider entities without embeddings ignore them during precision calculation
@@ -24,7 +22,7 @@ class Scoring:
         self.alpha = 0.4    # for Rc
         self.beta = 0.6     # for Sc
         self.bias = 0.08      # for childscore + bias >= parent score.
-        self.isRmv = False
+
         self.isEntity = False
 
         t1 = time()
@@ -39,8 +37,6 @@ class Scoring:
         self.precompute_vectors()
 
     def precompute_vectors(self):
-        self.isRmv = False
-
         t1 = time()
         class_id_labels = list([class_id, self.class_dict[class_id].raw_label] for class_id in self.class_dict.keys())
         df_class = self._calculate_label_embeddings(class_id_labels)
@@ -49,19 +45,9 @@ class Scoring:
             node.Lc = row['vector']
             node.label = row['preprocessed']
 
-
-        self.isRmv = True
-        df_class = self._calculate_label_embeddings(class_id_labels)
-        for idx, row in df_class.iterrows():
-            node = self.class_dict[idx]
-            node.Lc_rmv = row['vector']
-            node.label_rmv = row['preprocessed']
-
         t2 = time()
         print('Elapsed time for getting class label vectors %.2f minutes' % ((t2 - t1) / 60))
 
-
-        self.isRmv = False
         self.isEntity = True
 
         t1 = time()
@@ -72,13 +58,6 @@ class Scoring:
             node = self.entity_dict[idx]
             node.Le = row['vector']
             node.label = row['preprocessed']
-
-        self.isRmv = True
-        df_entity = self._calculate_label_embeddings(entity_id_labels)
-        for idx, row in df_entity.iterrows():
-            node = self.entity_dict[idx]
-            node.Le_rmv = row['vector']
-            node.label_rmv = row['preprocessed']
 
         t2 = time()
         print('Elapsed time for getting entity label vectors %.2f minutes' % ((t2 - t1) / 60))
@@ -96,15 +75,10 @@ class Scoring:
             node.pre_proc = False
             node.visited_for = None
 
-            node.Rc_rmv = None
-
         for _, entity in self.entity_dict.items():
             entity.score = None  # list of all the scores during traversal.
             entity.predicted_class = None
             entity.visited_classes = 0
-
-            entity.predicted_class_rmv = None
-
         return None
 
     def print_stats(self):
@@ -152,9 +126,6 @@ class Scoring:
     def precompute_tree_nodes(self):
         print(f'Root is: {self.root.ID}')
         # print(f'running post_order_traversal for Rc, Sc computation.')
-        # self.post_order_traversal(self.root, depth=0)
-        # print(f'Removing multiple parents')
-        # self.remove_multiple_parents()
         print('\nUsing Rc_sum as Sc')
         self.post_order_traversal_avg_Rc(self.root)
         return None
@@ -165,8 +136,6 @@ class Scoring:
             return
 
         root.Rc = self._Rc(root)
-        if self.isRmv:
-            root.Rc_rmv = self._Rc_rmv(root)
 
         if len(root.all_entities) == 0:
             root.Rc_count = 0
@@ -189,9 +158,6 @@ class Scoring:
         root.pre_proc = True
         return
 
-
-
-
     def post_order_traversal(self, root, depth):
         if root.pre_proc:   # return because child has many parents.
             return
@@ -209,8 +175,6 @@ class Scoring:
         root.Sc = self._Sc(root)
         root.pre_proc = True
         return None
-
-
 
     def predict_entity(self):
         failed = 0
@@ -260,20 +224,14 @@ class Scoring:
             return
 
         score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
-        score_rmv = self._cosine_similarity(root.Rc_rmv, entity.Le_rmv)
 
         entity.visited_classes += 1
         if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
             entity.score = score
             entity.predicted_class = root
 
-        if score_rmv > max(entity.score, entity.score_rmv) and len(root.all_entities) > 0 or entity.predicted_class_rmv is None:  # compare with any previous class scores
-            entity.score_rmv = score_rmv
-            entity.predicted_class_rmv = root
-
         if len(root.children) == 0:
             return
-
 
         score = self._cosine_similarity(root.Sc, entity.Le)
         max_path_score = score if score > max_path_score else max_path_score
@@ -287,7 +245,6 @@ class Scoring:
         return None
 
 
-
     def _Rc(self, node):
         non_zero_entities = []
         for entity in node.seed_entities:
@@ -299,20 +256,6 @@ class Scoring:
             return np.add(self.alpha * node.Lc, (1 - self.alpha) * entity_avg)
         else:
             return np.add(self.alpha * node.Lc, (1 - self.alpha) * np.zeros(self.vec_dim))
-
-
-    def _Rc_rmv(self, node):
-        non_zero_entities = []
-        for entity in node.seed_entities:
-            if np.any(entity.Le_rmv):
-                non_zero_entities.append(entity.Le_rmv)
-
-        if len(non_zero_entities) > 0:
-            entity_avg = np.mean(non_zero_entities, axis=0)
-            return np.add(self.alpha * node.Lc_rmv, (1 - self.alpha) * entity_avg)
-        else:
-            return np.add(self.alpha * node.Lc_rmv, (1 - self.alpha) * np.zeros(self.vec_dim))
-
 
     def _Sc(self, node):
         non_zero_subclasses = []
@@ -371,11 +314,8 @@ class Scoring:
         if self.isEntity:
             head = self.get_head(label)
 
-        fact = 1.15 # for classes
-
         for word, pos in nltk.pos_tag(label.split(' ')):
-            # if word in ['food', 'product']:
-            #     continue
+
             try:
                 word_embedding = self.keyed_vectors.get_vector(word)
             except KeyError:
@@ -389,54 +329,12 @@ class Scoring:
                 else:
                     multiplier = 1
 
-                # if not self.isEntity:
-                #     multiplier = fact
-                #     fact -= .15
-                #     if multiplier <= 0:
-                #         continue
-
                 label_embedding += (multiplier * word_embedding)    # increase vector magnitude if noun.
                 num_found_words += 1
 
         if num_found_words == 0:
             return np.zeros(self.vec_dim)
         else:
-            return label_embedding / num_found_words
-
-    def _calculate_embeddingsRmv(self, label):  # for a label take weighted average of word vectors.
-        label_embedding = 0
-        num_found_words = 0
-        flag = False
-        # head = self.get_head(label)
-        for word, pos in nltk.pos_tag(label.split(' ')):
-            if word == 'food':
-                flag = True
-
-            try:
-                word_embedding = self.keyed_vectors.get_vector(word)
-            except KeyError:
-                pass
-            else:
-                if pos in ['NN', 'NNS', 'NNP']: # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
-                    multiplier = 1.15
-                else:
-                    multiplier = 1
-                if word in ['dry', 'dried', 'slice', 'sliced', 'fried', 'fry', 'process', 'frozen', 'mix', 'cook', 'cooked', 'diced','glazed', 'food', 'product']:
-                    continue
-                    # multiplier = .2
-                    # num_found_words -= 1
-                # if head == word:
-                #     multiplier = 1.8
-
-                label_embedding += (multiplier * word_embedding)    # increase vector magnitude if noun.
-                num_found_words += 1
-
-        if num_found_words == 0:
-            return np.zeros(self.vec_dim)
-        else:
-            # if 0.01 < self._cosine_similarity(self.keyed_vectors.get_vector('food'), label_embedding/num_found_words) < .5:
-            #     label_embedding += self.keyed_vectors.get_vector('food')
-            #     num_found_words += 1
             return label_embedding / num_found_words
 
 
@@ -445,17 +343,14 @@ class Scoring:
         pd_label_embeddings.set_index('ID', inplace=True)
 
         # pd_label_embeddings = pd.DataFrame(index=index_list, columns=['preprocessed', 'vector'])
-        pd_label_embeddings['preprocessed'] = self.fpm.preprocess_columns(pd_label_embeddings['label'], load_phrase_model=False)
+        pd_label_embeddings['preprocessed'] = self.fpm.preprocess_columns(pd_label_embeddings['label'], load_phrase_model=True, generate_phrase=True)
 
         # some preprocessed columns are empty due to lemmatiazation, fill it up with original
         empty_index = (pd_label_embeddings['preprocessed'] == '')
         pd_label_embeddings.loc[empty_index, 'preprocessed'] = pd_label_embeddings['label'][empty_index]
         pd_label_embeddings.loc[empty_index, 'preprocessed'] = pd_label_embeddings.loc[empty_index, 'preprocessed'].apply(lambda x: x.lower())  # at least use lowercase as preprocessing.
 
-        if self.isRmv:
-            pd_label_embeddings['vector'] = pd_label_embeddings['preprocessed'].apply(self._calculate_embeddingsRmv)
-        else:
-            pd_label_embeddings['vector'] = pd_label_embeddings['preprocessed'].apply(self._calculate_embeddings)
+        pd_label_embeddings['vector'] = pd_label_embeddings['preprocessed'].apply(self._calculate_embeddings)
 
         return pd_label_embeddings
 

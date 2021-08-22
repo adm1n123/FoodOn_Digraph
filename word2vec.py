@@ -22,7 +22,7 @@ class WordEmbeddings:
             self.word2vec_files[i] = self.file_dir+self.word2vec_files[i]
 
         # for training word embeddings
-        self.summary_preprocessed_file = 'output/wikipedia_preprocessed.txt'
+        self.summary_preprocessed_file = 'output/wikipedia_preprocessed_phrases.txt'
         self.summary_prep_col = 'summary_preprocessed'
 
     def download_glove(self):
@@ -66,9 +66,9 @@ class Word2vecTrainer:
         self.window = 10
         self.min_count = 1
         self.workers = 16
-        self.vectors_save_file = 'data/model/word2vec_trained.txt'
-        self.model_save_file = 'data/model/word2vec_model.model'
-        self.loss_save_file = 'data/model/train_loss.pdf'
+        self.vectors_save_file = 'data/model/phrase_word2vec_trained.txt'
+        self.model_save_file = 'data/model/phrase_word2vec_model.model'
+        self.loss_save_file = 'data/model/phrase_train_loss.pdf'
 
     def train(self, sentences, pretrained_file=None):   # retraining of pretrained vectors is not possible in gensim 4 word2vec model.
         self.model = Word2Vec(
