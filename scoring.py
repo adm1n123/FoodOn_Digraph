@@ -28,7 +28,7 @@ class Scoring:
         t1 = time()
         print('Loading word2vec...', end='')
         self.vec_dim = 300
-        self.keyed_vectors = KeyedVectors.load_word2vec_format('data/model/word2vec_trained.txt')
+        self.keyed_vectors = KeyedVectors.load_word2vec_format('data/model/phrase_word2vec_trained.txt')
         t2 = time()
         print('Elapsed time %.2f minutes' % ((t2 - t1) / 60))
 
@@ -321,11 +321,12 @@ class Scoring:
             except KeyError:
                 pass
             else:
-                if head == word:
-                    multiplier = 1.5
-                elif pos in ['NN', 'NNS', 'NNP']:  # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
-                    multiplier = 1.15
-
+                # if head == word:
+                #     multiplier = 1.5
+                if word.find('_') > 0:
+                    multiplier = 2
+                # elif pos in ['NN', 'NNS', 'NNP']:  # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
+                #     multiplier = 1.15
                 else:
                     multiplier = 1
 

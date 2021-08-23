@@ -97,6 +97,7 @@ class Word2vecTrainer:
             compute_loss=True,
             callbacks=[self.callback])
 
+
     def save_model(self):
         self.model.save(self.model_save_file)
 
