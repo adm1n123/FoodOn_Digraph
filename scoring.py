@@ -28,7 +28,7 @@ class Scoring:
         t1 = time()
         print('Loading word2vec...', end='')
         self.vec_dim = 300
-        self.keyed_vectors = KeyedVectors.load_word2vec_format('data/model/phrase_word2vec_trained.txt')
+        self.keyed_vectors = KeyedVectors.load_word2vec_format('data/model/word2vec_trained.txt')
         t2 = time()
         print('Elapsed time %.2f minutes' % ((t2 - t1) / 60))
 
@@ -66,9 +66,9 @@ class Scoring:
         for _, node in self.class_dict.items():
             node.Rc = None
             node.Sc = None
-            node.score = None  # similarity with this class (used from child to set node.can_back = false.)
+            # node.score = None  # similarity with this class (used from child to set node.can_back = false.)
             node.predicted_entities = []  # predicted entities for this class
-            node.backtrack = None  # can backtrack store the entity id or iteration number if iteration no == this iteration then do not backtrack.
+            # node.backtrack = None  # can backtrack store the entity id or iteration number if iteration no == this iteration then do not backtrack.
             node.visited = 0
             node.Rc_sum = None
             node.Rc_count = 0
@@ -184,7 +184,7 @@ class Scoring:
         print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
             entity.score = -1
-            entity.score_rmv = -1
+            # entity.score_rmv = -1
             # self.traverse_all_Rc(self.root, entity)
             self.traverse_greedy(self.root, entity, 0)
             visited_classes += entity.visited_classes
@@ -231,6 +231,7 @@ class Scoring:
             entity.predicted_class = root
 
         if len(root.children) == 0:
+            root.visited_for = entity
             return
 
         score = self._cosine_similarity(root.Sc, entity.Le)
@@ -310,9 +311,9 @@ class Scoring:
     def _calculate_embeddings(self, label):  # for a label take weighted average of word vectors.
         label_embedding = 0
         num_found_words = 0
-        head = None
-        if self.isEntity:
-            head = self.get_head(label)
+        # head = None
+        # if self.isEntity:
+        #     head = self.get_head(label)
 
         for word, pos in nltk.pos_tag(label.split(' ')):
 
@@ -321,12 +322,8 @@ class Scoring:
             except KeyError:
                 pass
             else:
-                # if head == word:
-                #     multiplier = 1.5
-                if word.find('_') > 0:
-                    multiplier = 2
-                # elif pos in ['NN', 'NNS', 'NNP']:  # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
-                #     multiplier = 1.15
+                if pos in ['NN', 'NNS', 'NNP']:  # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
+                    multiplier = 1.15
                 else:
                     multiplier = 1
 
@@ -343,8 +340,7 @@ class Scoring:
         pd_label_embeddings = pd.DataFrame(index_list, columns=['ID', 'label'])
         pd_label_embeddings.set_index('ID', inplace=True)
 
-        # pd_label_embeddings = pd.DataFrame(index=index_list, columns=['preprocessed', 'vector'])
-        pd_label_embeddings['preprocessed'] = self.fpm.preprocess_columns(pd_label_embeddings['label'], load_phrase_model=True, generate_phrase=True)
+        pd_label_embeddings['preprocessed'] = self.fpm.preprocess_columns(pd_label_embeddings['label'], load_phrase_model=False, generate_phrase=False)
 
         # some preprocessed columns are empty due to lemmatiazation, fill it up with original
         empty_index = (pd_label_embeddings['preprocessed'] == '')

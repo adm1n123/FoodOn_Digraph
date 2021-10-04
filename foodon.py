@@ -3,6 +3,7 @@ import logging as log
 import os
 import random
 import networkx as nx
+import math
 from utils.utilities import file_exists, save_pkl, load_pkl
 from scoring import Scoring
 
@@ -187,10 +188,42 @@ class FoodOn:
         print('seeds %d, Found %d non-seed entities to populate out of %d all entities.' % (len(seeds), len(non_seeds), len(self.all_entities)))
         return digraph_seeded
 
+    def seed_digraph2(self):
+        print('Seeding digraph.')
+        if file_exists(self.digraph_seeded_pkl) and self.use_pkl:
+            print('Using pickled seeded digraph file: %s', self.digraph_seeded_pkl)
+            return load_pkl(self.digraph_seeded_pkl)
+
+        seeds = set()
+        count = 0
+        # min_non_seeds = 1
+        threshold, fraction = 1, .9 # if entities are more than 5 take 90% as seeds.
+        for _, node in self.class_dict.items():
+            if len(node.all_entities) > threshold:
+                node.seed_entities = random.sample(node.all_entities, math.floor(len(node.all_entities)*fraction))
+            # elif len(node.all_entities) > min_non_seeds:
+            #     node.seed_entities = random.sample(node.all_entities, len(node.all_entities)-min_non_seeds)
+            else:
+                node.seed_entities = node.all_entities.copy()
+
+            seeds = seeds.union(set(node.seed_entities))
+
+            if len(node.all_entities) == 0:
+                count += 1
+
+        non_seeds = set(self.entity_dict.values()) - seeds
+
+        print(f'Classes without entities: {count}, classes with entities: {len(self.all_classes)-count}')
+        digraph_seeded = (self.class_dict, list(non_seeds))
+        # print('Saving seeded digraph to file: %s', self.digraph_seeded_pkl)
+        # save_pkl(digraph_seeded, self.digraph_seeded_pkl)
+        print('seeds %d, Found %d non-seed entities to populate out of %d all entities.' % (len(seeds), len(non_seeds), len(self.all_entities)))
+        return digraph_seeded
+
 
     def populate_foodon_digraph(self):
 
-        class_dict, non_seed_entities = self.seed_digraph()
+        class_dict, non_seed_entities = self.seed_digraph2()
 
         scoring = Scoring(
             root=self.digraph_root,
@@ -217,14 +250,14 @@ class Class:
         self.Lc = None
         self.Rc = None
         self.Sc = None
-        self.score = None # similarity with this class (used from child to set self.can_back = false.)
+        # self.score = None # similarity with this class (used from child to set self.can_back = false.)
         self.seed_entities = [] # seed entities for this class
         self.predicted_entities = []    # predicted entities for this class
         self.all_entities = []  # all entities in this class
         self.children = []  # all child subclasses(not entities)
         self.parents = []    # all parents
         self.visited = 0
-        self.Rc_sum = None  # sum of all Rc vectors of subclasses whith non-zero entities.
+        self.Rc_sum = None  # sum of all Rc vectors of subclasses with non-zero entities.
         self.Rc_count = 0   # count of all the classes in subtree with non-zero entities.
         self.in_path = False
         self.pre_proc = False   # vector Rc, Sc computed.
