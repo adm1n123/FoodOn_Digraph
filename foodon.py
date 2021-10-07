@@ -197,7 +197,7 @@ class FoodOn:
         seeds = set()
         count = 0
         # min_non_seeds = 1
-        threshold, fraction = 1, .8 # if entities are more than 5 take 80% as seeds.
+        threshold, fraction = 1, .9999999 # if entities are more than 5 take 80% as seeds.
         for _, node in self.class_dict.items():
             if len(node.all_entities) > threshold:
                 node.seed_entities = random.sample(node.all_entities, math.floor(len(node.all_entities)*fraction))
