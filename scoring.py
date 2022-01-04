@@ -534,7 +534,7 @@ class Scoring:
                         z = 2+3
 
                     c_score = self._cosine_similarity(entity.Le, c_class.Rc)
-                    print(f'entity: {entity.label} not predicted correctly. correct class: {c_class.label} score: {c_score:.2f}, predicted class: {entity.predicted_class.label}, score: {entity.score:.2f}')
+                    print(f'entity: {entity.label} not predicted correctly. correct class: {c_class.label}, score: {c_score:.2f}, predicted class: {entity.predicted_class.label}, score: {entity.score:.2f}')
 
     def find_worst_classes(self):
         print('\n\n\n\n\n')

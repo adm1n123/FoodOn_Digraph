@@ -1,6 +1,6 @@
 
 
-import os
+import os, math
 import pickle
 import logging as log
 from word2vec import WordEmbeddings
@@ -18,10 +18,6 @@ def main():
     # train_embeddings()
 
     create_and_run_model()
-
-
-
-
     # testing()
 
 
@@ -50,17 +46,29 @@ def create_and_run_model():
 # ############################################################ TESTING #########################################
 
 def testing():
-    populated_filepath = 'data/scores/populated.pkl'
-    iteration_populated_dict = load_pkl(populated_filepath)
+    # populated_filepath = 'data/scores/populated.pkl'
+    # iteration_populated_dict = load_pkl(populated_filepath)
 
-    skeleton_and_entities_pkl = 'data/FoodOn/skeleton_candidate_classes_dict.pkl'
-    skeleton_candidate_classes_dict, candidate_entities = load_pkl(skeleton_and_entities_pkl)
+    # skeleton_and_entities_pkl = 'data/FoodOn/skeleton_candidate_classes_dict.pkl'
+    # skeleton_candidate_classes_dict, candidate_entities = load_pkl(skeleton_and_entities_pkl)
 
-    candidate_ontology_pkl = 'data/FoodOn/candidate_classes_dict.pkl'
-    candidate_classes_dict = load_pkl(candidate_ontology_pkl)
+    # candidate_ontology_pkl = 'data/FoodOn/candidate_classes_dict.pkl'
+    # candidate_classes_dict = load_pkl(candidate_ontology_pkl)
 
 
     model = KeyedVectors.load_word2vec_format('data/model/word2vec_trained.txt')
+    vectors = []
+    for key in ['food', 'product', 'dry', 'fry', 'chicken', 'meat', 'mutton', 'paneer', 'tomato', 'milk', 'cream', 'process', 'papaya', 'whole', 'raw', 'fruit', 'frost', 'mix', 'cheese', 'cake', 'crabmeat', 'packed', 'freeze', 'hen', 'egg']:
+        vectors.append([key, math.sqrt(np.sum(np.square(model[key])))])
+
+    vectors = sorted(vectors, key=lambda x: x[1], reverse=True)
+    vectors = vectors
+
+    for entry in vectors:
+        print(entry)
+
+
+
     print(model.most_similar(positive=['king', 'woman'], negative=['man']))
     print(model.most_similar(positive=['apple']))
     print(model.most_similar(positive=['fruit']))

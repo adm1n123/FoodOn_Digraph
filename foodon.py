@@ -223,7 +223,11 @@ class FoodOn:
 
     def populate_foodon_digraph(self):
 
+<<<<<<< HEAD
         class_dict, non_seed_entities = self.seed_digraph2()
+=======
+        class_dict, non_seed_entities = self.seed_digraph()
+>>>>>>> defaece (prec 33.4 alpha .4, beta .6. checkpoint)
 
         scoring = Scoring(
             root=self.digraph_root,
