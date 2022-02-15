@@ -1,10 +1,7 @@
 import pandas as pd
-import logging as log
 import os
 import random
-import networkx as nx
 import math
-from utils.utilities import file_exists, save_pkl, load_pkl
 from scoring import Scoring
 
 class FoodOn:
@@ -19,11 +16,8 @@ class FoodOn:
         self.csv_file = 'data/FoodOn/FOODON.csv'
         self.pairs_file = 'data/FoodOn/foodonpairs.txt' # save all pairs (parent, child) of FoodOn to here
         self.use_pairs_file = True  # don't generate again
-        self.use_pkl = False  # if True, create and overwrite previous pickle file
 
         self.foodOn_root = 'http://purl.obolibrary.org/obo/FOODON_00001002' # root class we are working with.
-        self.digraph_pkl = 'data/FoodOn/digraph.pkl'    # save digraph here
-        self.digraph_seeded_pkl = 'data/FoodOn/digraph_seeded.pkl'  # save digraph with generated seeds
 
         self.num_seeds = 2  # minimum number of labeled data for each class
         self.num_min_seeds = 1 # if total entities are less than num_seeds take this as number of seeds.
@@ -128,10 +122,6 @@ class FoodOn:
 
     def generate_digraph(self):
         print('Generating Digraph')
-        if os.path.isfile(self.digraph_pkl) and self.use_pkl:
-            print('Using pre-generated digraph file: %s', self.digraph_pkl)
-            return load_pkl(self.digraph_pkl)
-
         class_dict = {class_id: Class(class_id) for _, class_id in enumerate(self.all_classes)}
         entity_dict = {entity_id: Entity(entity_id) for _, entity_id in enumerate(self.all_entities)}
 
@@ -155,16 +145,11 @@ class FoodOn:
                 child.parents.append(parent)
 
         digraph = (class_dict[self.foodOn_root], class_dict, entity_dict)
-        # save_pkl(digraph, self.digraph_pkl)
         return digraph
 
 
     def seed_digraph(self):
         print('Seeding digraph.')
-        if file_exists(self.digraph_seeded_pkl) and self.use_pkl:
-            print('Using pickled seeded digraph file: %s', self.digraph_seeded_pkl)
-            return load_pkl(self.digraph_seeded_pkl)
-
         seeds = set()
         count = 0
         for _, node in self.class_dict.items():
@@ -183,17 +168,11 @@ class FoodOn:
 
         print(f'Classes without entities: {count}, classes with entities: {len(self.all_classes)-count}')
         digraph_seeded = (self.class_dict, list(non_seeds))
-        # print('Saving seeded digraph to file: %s', self.digraph_seeded_pkl)
-        # save_pkl(digraph_seeded, self.digraph_seeded_pkl)
         print('seeds %d, Found %d non-seed entities to populate out of %d all entities.' % (len(seeds), len(non_seeds), len(self.all_entities)))
         return digraph_seeded
 
     def seed_digraph2(self):
         print('Seeding digraph.')
-        if file_exists(self.digraph_seeded_pkl) and self.use_pkl:
-            print('Using pickled seeded digraph file: %s', self.digraph_seeded_pkl)
-            return load_pkl(self.digraph_seeded_pkl)
-
         seeds = set()
         count = 0
         # min_non_seeds = 1
@@ -201,8 +180,6 @@ class FoodOn:
         for _, node in self.class_dict.items():
             if len(node.all_entities) > threshold:
                 node.seed_entities = random.sample(node.all_entities, math.floor(len(node.all_entities)*fraction))
-            # elif len(node.all_entities) > min_non_seeds:
-            #     node.seed_entities = random.sample(node.all_entities, len(node.all_entities)-min_non_seeds)
             else:
                 node.seed_entities = node.all_entities.copy()
 
@@ -215,8 +192,6 @@ class FoodOn:
 
         print(f'Classes without entities: {count}, classes with entities: {len(self.all_classes)-count}')
         digraph_seeded = (self.class_dict, list(non_seeds))
-        # print('Saving seeded digraph to file: %s', self.digraph_seeded_pkl)
-        # save_pkl(digraph_seeded, self.digraph_seeded_pkl)
         print('seeds %d, Found %d non-seed entities to populate out of %d all entities.' % (len(seeds), len(non_seeds), len(self.all_entities)))
         return digraph_seeded
 
@@ -250,7 +225,6 @@ class Class:
         self.Lc = None
         self.Rc = None
         self.Sc = None
-        # self.score = None # similarity with this class (used from child to set self.can_back = false.)
         self.seed_entities = [] # seed entities for this class
         self.predicted_entities = []    # predicted entities for this class
         self.all_entities = []  # all entities in this class
@@ -262,6 +236,8 @@ class Class:
         self.in_path = False
         self.pre_proc = False   # vector Rc, Sc computed.
         self.visited_for = None
+        self.all_words = True
+        self.head = None
 
 
 class Entity:
@@ -274,6 +250,8 @@ class Entity:
         self.predicted_class = None
         self.parents = []  # all parent classes
         self.visited_classes = 0
+        self.all_words = True
+        self.head = None
 
 
 

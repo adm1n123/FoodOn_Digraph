@@ -46,43 +46,41 @@ def create_and_run_model():
 # ############################################################ TESTING #########################################
 
 def testing():
-    # populated_filepath = 'data/scores/populated.pkl'
-    # iteration_populated_dict = load_pkl(populated_filepath)
 
-    # skeleton_and_entities_pkl = 'data/FoodOn/skeleton_candidate_classes_dict.pkl'
-    # skeleton_candidate_classes_dict, candidate_entities = load_pkl(skeleton_and_entities_pkl)
+    pair_pd = pd.read_csv('data/FoodOn/foodonpairs.txt', sep='\t')
 
-    # candidate_ontology_pkl = 'data/FoodOn/candidate_classes_dict.pkl'
-    # candidate_classes_dict = load_pkl(candidate_ontology_pkl)
+    fdc_preprocess = FDCPreprocess()
+    l1 = fdc_preprocess.preprocess_columns(pair_pd['Child_label'], False, False).tolist()
+    l2 = fdc_preprocess.preprocess_columns(pair_pd['Parent_label'], False, False).tolist()
+    ontology_list = l1+l2
 
+    ontology_words = set()
+    for word in ontology_list:
+        ontology_words.update(word.split())
 
+    print(f'Total distinct words in ontology: {len(ontology_words)}')
+
+    count = 0
     model = KeyedVectors.load_word2vec_format('data/model/word2vec_trained.txt')
-    vectors = []
-    for key in ['food', 'product', 'dry', 'fry', 'chicken', 'meat', 'mutton', 'paneer', 'tomato', 'milk', 'cream', 'process', 'papaya', 'whole', 'raw', 'fruit', 'frost', 'mix', 'cheese', 'cake', 'crabmeat', 'packed', 'freeze', 'hen', 'egg']:
-        vectors.append([key, math.sqrt(np.sum(np.square(model[key])))])
+    for word in ontology_words:
+        try:
+            model.get_vector(word)
+            count += 1
+        except KeyError:
+            print(f'word in ontology but not in word2vec:', word)
+            pass
 
-    vectors = sorted(vectors, key=lambda x: x[1], reverse=True)
-    vectors = vectors
+    print(f'Total common words in ontology and word2vec are:{count}')
 
-    for entry in vectors:
-        print(entry)
+    with open('data/model/bert/assets/vocab.txt', "r", encoding="utf8") as file:
+        lines = file.readlines()
 
+    count = 0
+    for line in lines:
+        if line.strip() in ontology_words:
+            count += 1
 
-
-    print(model.most_similar(positive=['king', 'woman'], negative=['man']))
-    print(model.most_similar(positive=['apple']))
-    print(model.most_similar(positive=['fruit']))
-
-    class_label = 'beverage food product'
-
-    value = candidate_classes_dict[class_label]
-    fdc = FDCPreprocess()
-    pd_entities_label_embeddings = _calculate_label_embeddings(value[1], model, fdc)
-    pd_class_label_embedding = _calculate_label_embeddings([class_label], model, fdc)
-
-    score = _calculate_class_entities_score(pd_entities_label_embeddings, pd_class_label_embedding, candidate_classes_dict, class_label)
-    print(f'beverage class score with its entities: {score}')
-
+    print(f'Total common words in ontology and bert are: {count}')
 
 
 
@@ -161,6 +159,16 @@ def _cosine_similarity(array1, array2):
 
     return similarity
 
+def remove_same_words():
+    with open('data/FoodOn/correction', encoding='utf8') as file:
+        lines = file.readlines()
+
+    for line in lines:
+        line = line.strip()
+        words = line.split(" correction ")
+        if words[0] != words[1]:
+            print(f'{words[0]} correction {words[1]}')
 
 if __name__ == '__main__':
     main()
+    # remove_same_words()

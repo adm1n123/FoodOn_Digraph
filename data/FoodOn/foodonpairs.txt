@@ -358,7 +358,7 @@ http://purl.obolibrary.org/obo/FOODON_03316401	http://purl.obolibrary.org/obo/FO
 http://purl.obolibrary.org/obo/FOODON_03306767	http://purl.obolibrary.org/obo/FOODON_03316579	pumpkin pie (baked)	multi-component vegetable product
 http://purl.obolibrary.org/obo/FOODON_03317304	http://purl.obolibrary.org/obo/FOODON_03316579	chili con carne with beans (dish, vegetarian)	multi-component vegetable product
 http://purl.obolibrary.org/obo/FOODON_03315985	http://purl.obolibrary.org/obo/FOODON_03316579	vegetable preparation (energy-reduced)	multi-component vegetable product
-http://purl.obolibrary.org/obo/FOODON_00003177	http://purl.obolibrary.org/obo/FOODON_03316579	veggi burger	multi-component vegetable product
+http://purl.obolibrary.org/obo/FOODON_00003177	http://purl.obolibrary.org/obo/FOODON_03316579	veggie burger	multi-component vegetable product
 http://purl.obolibrary.org/obo/FOODON_03315987	http://purl.obolibrary.org/obo/FOODON_03316579	sweet-sour vegetable preserves	multi-component vegetable product
 http://purl.obolibrary.org/obo/FOODON_03304613	http://purl.obolibrary.org/obo/FOODON_03316579	sukiyaki vegetables (raw)	multi-component vegetable product
 http://purl.obolibrary.org/obo/FOODON_03317425	http://purl.obolibrary.org/obo/FOODON_03316579	vegetable (candied)	multi-component vegetable product
@@ -534,7 +534,7 @@ http://purl.obolibrary.org/obo/FOODON_00001970	http://purl.obolibrary.org/obo/FO
 http://purl.obolibrary.org/obo/FOODON_03306081	http://purl.obolibrary.org/obo/FOODON_00001645	imitation lemonade drink	beverage analog
 http://purl.obolibrary.org/obo/FOODON_00001968	http://purl.obolibrary.org/obo/FOODON_00001645	imitation fruit juice	beverage analog
 http://purl.obolibrary.org/obo/FOODON_00001580	http://purl.obolibrary.org/obo/FOODON_00001645	alcoholic beverage analog	beverage analog
-http://purl.obolibrary.org/obo/FOODON_00003177	http://purl.obolibrary.org/obo/FOODON_00002027	veggi burger	meat product analog
+http://purl.obolibrary.org/obo/FOODON_00003177	http://purl.obolibrary.org/obo/FOODON_00002027	veggie burger	meat product analog
 http://purl.obolibrary.org/obo/FOODON_03309397	http://purl.obolibrary.org/obo/FOODON_00002027	vegetable burger mix	meat product analog
 http://purl.obolibrary.org/obo/FOODON_03311357	http://purl.obolibrary.org/obo/FOODON_00002027	imitation beef jerky	meat product analog
 http://purl.obolibrary.org/obo/FOODON_00002129	http://purl.obolibrary.org/obo/FOODON_00002027	plant based meat product analog	meat product analog
@@ -1140,7 +1140,7 @@ http://purl.obolibrary.org/obo/FOODON_03315640	http://purl.obolibrary.org/obo/FO
 http://purl.obolibrary.org/obo/FOODON_03315644	http://purl.obolibrary.org/obo/FOODON_00001831	cheese spread with added ingredients processed	emulsified cheese product
 http://purl.obolibrary.org/obo/FOODON_03303516	http://purl.obolibrary.org/obo/FOODON_00002091	pasteurized process cheese (alcohol added)	pasteurized process cheese food product
 http://purl.obolibrary.org/obo/FOODON_03303542	http://purl.obolibrary.org/obo/FOODON_00002091	pasteurized process cheese food with fruit or vegetable	pasteurized process cheese food product
-http://purl.obolibrary.org/obo/FOODON_03316868	http://purl.obolibrary.org/obo/FOODON_00002091	pasteurized process cheese food with fruits vgetables or meats	pasteurized process cheese food product
+http://purl.obolibrary.org/obo/FOODON_03316868	http://purl.obolibrary.org/obo/FOODON_00002091	pasteurized process cheese food with fruits vegetables or meats	pasteurized process cheese food product
 http://purl.obolibrary.org/obo/FOODON_03303517	http://purl.obolibrary.org/obo/FOODON_00002091	pasteurized process cheese food	pasteurized process cheese food product
 http://purl.obolibrary.org/obo/FOODON_03303853	http://purl.obolibrary.org/obo/FOODON_00002091	gruenland cheese	pasteurized process cheese food product
 http://purl.obolibrary.org/obo/FOODON_03302673	http://purl.obolibrary.org/obo/FOODON_00002091	pasteurized process cheese artificially colored spray-dried	pasteurized process cheese food product
@@ -9503,7 +9503,7 @@ http://purl.obolibrary.org/obo/FOODON_03315582	http://purl.obolibrary.org/obo/FO
 http://purl.obolibrary.org/obo/FOODON_03315155	http://purl.obolibrary.org/obo/FOODON_00002165	tripe food product	organ meat product
 http://purl.obolibrary.org/obo/FOODON_00002819	http://purl.obolibrary.org/obo/FOODON_00002165	liver food product	organ meat product
 http://purl.obolibrary.org/obo/FOODON_00002822	http://purl.obolibrary.org/obo/FOODON_00002165	lung food product	organ meat product
-http://purl.obolibrary.org/obo/FOODON_00003155	http://purl.obolibrary.org/obo/FOODON_00002165	sweatbread food product	organ meat product
+http://purl.obolibrary.org/obo/FOODON_00003155	http://purl.obolibrary.org/obo/FOODON_00002165	sweetbread food product	organ meat product
 http://purl.obolibrary.org/obo/FOODON_00001129	http://purl.obolibrary.org/obo/FOODON_00001124	goat milk cheese food product	caprine cheese food product
 http://purl.obolibrary.org/obo/FOODON_00001130	http://purl.obolibrary.org/obo/FOODON_00001125	sheep milk cheese food product	ovine cheese food product
 http://purl.obolibrary.org/obo/FOODON_03301738	http://purl.obolibrary.org/obo/FOODON_00001945	hard cheese	hard cheese food product

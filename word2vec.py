@@ -15,14 +15,14 @@ import matplotlib.pylab as plt
 class WordEmbeddings:
     def __init__(self):
         self.file_dir = 'data/pretrain/'
-        self.glove_files = ['glove.6B.50d.txt', 'glove.6B.100d.txt', 'glove.6B.200d.txt', 'glove.6B.300d.txt']
-        self.word2vec_files = ['word2vec.6B.50d.txt', 'word2vec.6B.100d.txt', 'word2vec.6B.200d.txt', 'word2vec.6B.300d.txt']
+        self.glove_files = ['glove.6B.300d.txt']
+        self.word2vec_files = ['word2vec.6B.300d.txt']
         for i in range(len(self.glove_files)):
             self.glove_files[i] = self.file_dir+self.glove_files[i]
             self.word2vec_files[i] = self.file_dir+self.word2vec_files[i]
 
         # for training word embeddings
-        self.summary_preprocessed_file = 'output/wikipedia_preprocessed_phrases.txt'
+        self.summary_preprocessed_file = 'data/wikipedia/preprocessed_new.txt'
         self.summary_prep_col = 'summary_preprocessed'
 
     def download_glove(self):
@@ -61,14 +61,14 @@ class Word2vecTrainer:
     def __init__(self):
         self.callback = CallbackOnEpoch()
         self.model = None
-        self.epochs = 100
+        self.epochs = 250
         self.vector_size = 300
         self.window = 10
         self.min_count = 1
         self.workers = 16
-        self.vectors_save_file = 'data/model/phrase_word2vec_trained.txt'
-        self.model_save_file = 'data/model/phrase_word2vec_model.model'
-        self.loss_save_file = 'data/model/phrase_train_loss.pdf'
+        self.vectors_save_file = 'data/model/word2vec_trained_new.txt'
+        self.model_save_file = 'data/model/word2vec_model.model'
+        self.loss_save_file = 'data/model/train_loss.pdf'
 
     def train(self, sentences, pretrained_file=None):   # retraining of pretrained vectors is not possible in gensim 4 word2vec model.
         self.model = Word2Vec(

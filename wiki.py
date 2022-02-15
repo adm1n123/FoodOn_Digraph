@@ -15,11 +15,11 @@ class Wikipedia:
     """
 
     def __init__(self):
-        self.skip_query = True
+        self.skip_query = False
         self.reuse_summary = True
         self.failed_query_file = 'data/wikipedia/failed_queries.txt'
         self.summary_file = 'data/wikipedia/summaries.txt'
-        self.summary_preprocessed_file = 'output/wikipedia_preprocessed_phrases.txt'
+        self.summary_preprocessed_file = 'data/wikipedia/preprocessed_phrases.txt'
         self.foodon_pairs_file = 'data/FoodOn/foodonpairs.txt'
         self.max_query_in_run = 1000    # number of queries to fire in one run and save summary.
 
@@ -35,10 +35,14 @@ class Wikipedia:
 
         fdc_preprocess = FDCPreprocess()
         processed_labels = fdc_preprocess.preprocess_columns(pd.Series(labels), load_phrase_model=False, generate_phrase=True).tolist()
-        queries = processed_labels.copy()   # queries have all the labels now split each label to get more queries
+        queries = []
+        for label in labels:
+            queries.extend(label.split(' '))
+
         for label in processed_labels:
-            queries.extend(label.split())
+            queries.extend(label.split(' '))
         queries = list(set(queries))
+
         queries = self.extend_queries(queries)
 
 
@@ -51,7 +55,7 @@ class Wikipedia:
         summary_df, failed_df = self.query_summary(queries, summary_file, failed_query_file)
         summary_df.to_csv(self.summary_file, sep='\t', index=False)
         failed_df.to_csv(self.failed_query_file, sep='\t', index=False)
-        summary_df['summary_preprocessed'] = fdc_preprocess.preprocess_columns(summary_df['summary'], load_phrase_model=True, generate_phrase=True)   # load_phrase_model=True. use phrases for food labels don't make phrases for wiki contents.
+        summary_df['summary_preprocessed'] = fdc_preprocess.preprocess_columns(summary_df['summary'], load_phrase_model=False, generate_phrase=False)   # load_phrase_model=True. use phrases for food labels don't make phrases for wiki contents.
         summary_df.to_csv(self.summary_preprocessed_file, sep='\t', index=False)
 
 
@@ -111,8 +115,8 @@ class Wikipedia:
             pd_failed = pd_failed.append(pd_prev_failed)
             # pd_summaries = pd_summaries[~pd_summaries['query'].isin(depracated_queries)]  # don't remove any results fetching takes time.
             # pd_failed = pd_failed[~pd_failed['query'].isin(depracated_queries)]
-        print('Successfully got wikipedia summaries for %d queries', pd_summaries.shape[0])
-        print('Failed to get wikipedia summaries for %d queries', pd_failed.shape[0])
+        print(f'Successfully got wikipedia summaries for {pd_summaries.shape[0]} queries')
+        print(f'Failed to get wikipedia summaries for {pd_failed.shape[0]} queries')
         return pd_summaries, pd_failed
 
     def multi_queries(self, query):

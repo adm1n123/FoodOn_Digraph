@@ -1,5 +1,7 @@
-import multiprocessing
+import math
 
+import tensorflow_hub as hub
+import tensorflow_text as text
 import nltk
 from nltk.tree import Tree
 import pandas as pd
@@ -24,43 +26,54 @@ class Scoring:
         self.bias = 0.08      # for childscore + bias >= parent score.
 
         self.isEntity = False
-
-        t1 = time()
-        print('Loading word2vec...', end='')
         self.vec_dim = 300
-        self.keyed_vectors = KeyedVectors.load_word2vec_format('data/model/word2vec_trained.txt')
+        t1 = time()
+        # print('Loading BERT...', end='')
+        # self.bert_preprocessor, self.bert_model = None, None
+        # self.load_BERT()
+        self.keyed_vectors = KeyedVectors.load_word2vec_format('data/model/word2vec_trained_new.txt')
+
         t2 = time()
         print('Elapsed time %.2f minutes' % ((t2 - t1) / 60))
 
         self.fpm = FDCPreprocess()
-
+        self.type_count = {}
         self.precompute_vectors()
 
     def precompute_vectors(self):
+        print('precomputing vectors...', end='')
+
         t1 = time()
         class_id_labels = list([class_id, self.class_dict[class_id].raw_label] for class_id in self.class_dict.keys())
         df_class = self._calculate_label_embeddings(class_id_labels)
+        print(f'class labels type stats:{self.type_count}, total:{len(class_id_labels)}')
         for idx, row in df_class.iterrows():
             node = self.class_dict[idx]
             node.Lc = row['vector']
             node.label = row['preprocessed']
+            node.head = self.find_head(node.raw_label)
 
         t2 = time()
-        print('Elapsed time for getting class label vectors %.2f minutes' % ((t2 - t1) / 60))
+        print('\rElapsed time for getting class label vectors %.2f minutes' % ((t2 - t1) / 60))
 
         self.isEntity = True
-
+        self.type_count = {}
         t1 = time()
         entity_id_labels = list(
             [entity_id, self.entity_dict[entity_id].raw_label] for entity_id in self.entity_dict.keys())
         df_entity = self._calculate_label_embeddings(entity_id_labels)
+        print(f'entity labels type stats:{self.type_count}, total:{len(entity_id_labels)}')
+        print('#######################################################################################################')
         for idx, row in df_entity.iterrows():
             node = self.entity_dict[idx]
             node.Le = row['vector']
             node.label = row['preprocessed']
+            node.head = self.find_head(node.raw_label)
 
         t2 = time()
         print('Elapsed time for getting entity label vectors %.2f minutes' % ((t2 - t1) / 60))
+
+        self.count_all_words(df_class, df_entity)
 
     def reset_nodes(self):
         for _, node in self.class_dict.items():
@@ -74,6 +87,7 @@ class Scoring:
             node.Rc_count = 0
             node.pre_proc = False
             node.visited_for = None
+
 
         for _, entity in self.entity_dict.items():
             entity.score = None  # list of all the scores during traversal.
@@ -224,6 +238,10 @@ class Scoring:
             return
 
         score = self._cosine_similarity(root.Rc, entity.Le)   # score of class with current entity used for traversal only.
+        # if len(entity.head) >= 1 and entity.head[0] in root.head:
+        #     score *= 1.15
+        # if len(entity.head) >= 2 and entity.head[1] in root.head:
+        #     score *= 1.15
 
         entity.visited_classes += 1
         if score > entity.score and len(root.all_entities) > 0:  # compare with any previous class scores
@@ -307,32 +325,156 @@ class Scoring:
             if head is not None:
                 return head[0]
 
+    def load_BERT(self):
+        preprocess_url = "data/model/bert_preprocessor"  # "https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3"
+        encoder_url = "data/model/bert"  # "https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/4"
+
+        self.bert_preprocessor = hub.KerasLayer(preprocess_url)
+        self.bert_model = hub.KerasLayer(encoder_url)
+
+    def _calculate_BERT_embeddings(self, labels):
+        bert_embedding = []
+        batch_size = 100
+        for batch in range(0, math.ceil(len(labels)/batch_size)):
+            start, end = batch*100, batch*100+batch_size
+            labels_slice = labels[start:end]
+            preprocessed_text = self.bert_preprocessor(labels_slice)
+            bert_results = self.bert_model(preprocessed_text)
+            label_vectors = bert_results['pooled_output']
+
+            for idx in range(len(labels_slice)):
+                bert_embedding.append(label_vectors[idx].numpy())
+
+            print(f'\r calculating bert embeddings:{batch/(len(labels)//batch_size):.2f}', end='')
+
+        print()
+
+        return bert_embedding
+
+    def noun_before(self, label, regx):
+        strings = label.split(regx)
+        left = strings[0].strip().split()
+        last = None
+        for word, pos in nltk.pos_tag(left):
+            if pos in ['NN', 'NNS', 'NNP', 'NNPS']:
+                last = word
+        return [last]
+
+    def noun_after(self, label, regx):
+        strings = label.split(regx)
+        right = strings[1].strip().split()
+        flag = False
+        for word, pos in nltk.pos_tag(label.split(' ')):
+            if word == regx.strip():
+                flag = True
+            elif flag and pos in ['NN', 'NNS', 'NNP', 'NNPS']:
+                return [word]
+        return [right[0]]
+
+    def find_head(self, label):
+        label = label.lower()
+        label = label.replace("-", " ")
+
+        if "(" in label:
+            self.type_count["("] = self.type_count.get("(", 0) + 1
+            label = label.replace(",", "")
+            return self.noun_before(label, "(")
+        if " or " in label:
+            self.type_count["or"] = self.type_count.get("or", 0) + 1
+            label = label.replace(",", "")
+            strings = label.split(" or ")
+            left = strings[0].strip().split()
+            right = strings[1].strip().split()
+            return [left[-1], right[0]]
+        if " based " in label:
+            self.type_count["based"] = self.type_count.get("based", 0) + 1
+            label = label.replace(",", "")
+            return self.noun_after(label, " based ")
+        if " packed in " in label:
+            self.type_count["packed in"] = self.type_count.get("packed in", 0) + 1
+            label = label.replace(",", "")
+            label = label.replace("packed in", "packed_in")
+            return self.noun_before(label, " packed_in")
+        if " with " in label:
+            self.type_count["with"] = self.type_count.get("with", 0) + 1
+            label = label.replace(",", "")
+            return self.noun_before(label, " with ")
+        if " in " in label:
+            self.type_count["in"] = self.type_count.get("in", 0) + 1
+            label = label.replace(",", "")
+            return self.noun_before(label, " in ")
+        if " flavoured " in label:
+            self.type_count["flavoured"] = self.type_count.get("flavoured", 0) + 1
+            label = label.replace(",", "")
+            return self.noun_after(label, " flavoured ")
+        if " made from " in label:
+            self.type_count["made from"] = self.type_count.get("made from", 0) + 1
+            label = label.replace(",", "")
+            label = label.replace("made from", "made_from")
+            return self.noun_before(label, " made_from ")
+        if " for " in label:
+            self.type_count["for"] = self.type_count.get("for", 0) + 1
+            label = label.replace(",", "")
+            return self.noun_before(label, " for ")
+        if "," in label:
+            self.type_count[","] = self.type_count.get(",", 0) + 1
+            return self.noun_before(label, ",")
+
+        self.type_count["rest"] = self.type_count.get("rest", 0) + 1
+
+        # label = label.replace(",", "")
+        # label = label.replace("food", "")
+        # label = label.replace("products", "")
+        # label = label.replace("product", "")
+        # last = None
+        # for word, pos in nltk.pos_tag(label.split()):
+        #     if pos in ['NN', 'NNS', 'NNP', 'NNPS']:
+        #         last = word
+        # if last is None:
+        #     return [label.split()[-1]]
+        # return [last]
+        return []
+
 
     def _calculate_embeddings(self, label):  # for a label take weighted average of word vectors.
+        preprocessed = self.fpm.preprocess_columns(pd.Series(label), load_phrase_model=False, generate_phrase=False)
+        p_label = preprocessed.tolist()[0]
+        if p_label == '':
+            p_label = label
+
         label_embedding = 0
         num_found_words = 0
-        # head = None
-        # if self.isEntity:
-        #     head = self.get_head(label)
-
-        for word, pos in nltk.pos_tag(label.split(' ')):
-
+        flag = False
+        head = self.find_head(label)
+        # print(f'label: {label}, head: {head}')
+        for word, pos in nltk.pos_tag(p_label.split(' ')):
+            # if word in ['food', 'product']:
+            #     continue
+            if word == 'food':
+                flag = True
             try:
                 word_embedding = self.keyed_vectors.get_vector(word)
             except KeyError:
                 pass
             else:
-                if pos in ['NN', 'NNS', 'NNP']:  # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
-                    multiplier = 1.15
+                if pos in ['NN', 'NNS', 'NNP', 'NNPS']: # take NN/NNS if word is noun then give higher weightage in averaging by increasing the vector magnitude.
+                    multiplier = 1.1
                 else:
                     multiplier = 1
-
+                if word in ['dry', 'dried', 'slice', 'sliced', 'fried', 'fry', 'process', 'processed', 'frozen', 'mix', 'cook', 'cooked', 'diced', 'glazed', 'food', 'product', 'based']:
+                    continue
+                    # multiplier = .2
+                    # num_found_words -= 1
+                if word in head:
+                    multiplier = 1.3
                 label_embedding += (multiplier * word_embedding)    # increase vector magnitude if noun.
                 num_found_words += 1
-
         if num_found_words == 0:
             return np.zeros(self.vec_dim)
         else:
+            if 0.01 < self._cosine_similarity(self.keyed_vectors.get_vector('food'), label_embedding/num_found_words) < .5:
+                label_embedding += self.keyed_vectors.get_vector('food')
+                num_found_words += 1
             return label_embedding / num_found_words
 
 
@@ -340,16 +482,31 @@ class Scoring:
         pd_label_embeddings = pd.DataFrame(index_list, columns=['ID', 'label'])
         pd_label_embeddings.set_index('ID', inplace=True)
 
-        pd_label_embeddings['preprocessed'] = self.fpm.preprocess_columns(pd_label_embeddings['label'], load_phrase_model=False, generate_phrase=False)
+        pd_label_embeddings['preprocessed'] = self.fpm.preprocess_columns(pd_label_embeddings['label'],load_phrase_model=False,generate_phrase=False)
 
         # some preprocessed columns are empty due to lemmatiazation, fill it up with original
         empty_index = (pd_label_embeddings['preprocessed'] == '')
         pd_label_embeddings.loc[empty_index, 'preprocessed'] = pd_label_embeddings['label'][empty_index]
-        pd_label_embeddings.loc[empty_index, 'preprocessed'] = pd_label_embeddings.loc[empty_index, 'preprocessed'].apply(lambda x: x.lower())  # at least use lowercase as preprocessing.
+        pd_label_embeddings.loc[empty_index, 'preprocessed'] = pd_label_embeddings.loc[empty_index, 'preprocessed'].apply(lambda x: x.lower())
 
-        pd_label_embeddings['vector'] = pd_label_embeddings['preprocessed'].apply(self._calculate_embeddings)
+        pd_label_embeddings['vector'] = pd_label_embeddings['label'].apply(self._calculate_embeddings)
+        # pd_label_embeddings['vector'] = self._calculate_BERT_embeddings(pd_label_embeddings['preprocessed'].tolist())
 
         return pd_label_embeddings
+
+    def spell_check(self, list):
+        from spellchecker import SpellChecker
+
+        spell = SpellChecker()
+        words = []
+        for item in list:
+            for word in item.split():
+                words.append(word)
+
+        misspelled = spell.unknown(words)
+        for word in misspelled:
+            print(f':{word}: correction :{spell.correction(word)}:')
+
 
 
     def _cosine_similarity(self, array1, array2):
@@ -534,7 +691,7 @@ class Scoring:
                         z = 2+3
 
                     c_score = self._cosine_similarity(entity.Le, c_class.Rc)
-                    print(f'entity: {entity.label} not predicted correctly. correct class: {c_class.label}, score: {c_score:.2f}, predicted class: {entity.predicted_class.label}, score: {entity.score:.2f}')
+                    print(f'entity: {entity.raw_label} not predicted correctly. correct class: {c_class.raw_label}, score: {c_score:.2f}, predicted class: {entity.predicted_class.raw_label}, score: {entity.score:.2f}')
 
     def find_worst_classes(self):
         print('\n\n\n\n\n')
@@ -542,7 +699,7 @@ class Scoring:
             if len(node.all_entities) < 10:
                 continue
 
-            if len(set(node.all_entities)-set(node.predicted_entities+node.seed_entities)) / len(set(node.all_entities)-set(node.seed_entities)) < .2:
+            if len(set(node.all_entities)-set(node.predicted_entities+node.seed_entities)) / len(set(node.all_entities)-set(node.seed_entities)) > .2:
                 print(f'\nclass with < 20% precision class: {node.raw_label}')
                 print('seeds: ', end=' ')
                 for entity in node.seed_entities:
@@ -589,3 +746,51 @@ class Scoring:
         print(f'correct_old:{correct_old}, correct_new:{correct_rmv}, correct_common:{correct_both}, incorrect_old:{incorrect_old}')
 
         return None
+
+    def count_all_words(self, df_class, df_entity):
+        tc,te,c,e = 0,0,0,0
+        for idx, row in df_class.iterrows():
+            tc += 1
+            node = self.class_dict[idx]
+            if len(node.label) < 1:
+                node.all_words = False
+                c += 1
+                print('class:', node.raw_label, ' word: ;')
+                continue
+            for word in node.label.split():
+                try:
+                    word_embedding = self.keyed_vectors.get_vector(word)
+                except KeyError:
+                    node.all_words = False
+                    print('class:', node.raw_label, ' word: ', word)
+                    pass
+            if not node.all_words:
+                c += 1
+
+
+        for idx, row in df_entity.iterrows():
+            te += 1
+            node = self.entity_dict[idx]
+            if len(node.label) < 1:
+                node.all_words = False
+                e += 1
+                print('entity:', node.raw_label, ' word: ;')
+                continue
+            for word in node.label.split():
+                try:
+                    word_embedding = self.keyed_vectors.get_vector(word)
+                except KeyError:
+                    node.all_words = False
+                    print('entity:', node.raw_label, ' word: ', word)
+                    pass
+            if not node.all_words:
+                e += 1
+
+
+        print(f'Total classes with missing label words are: {c}/{tc}, Total entities with missing label words are: {e}/{te}')
+        ec = 0
+        for idx, row in df_class.iterrows():
+            node = self.class_dict[idx]
+            if not node.all_words:
+                ec += len(node.all_entities)
+        print(f'These: {c} classes are responsible for: {ec} entities misclassification')
