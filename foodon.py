@@ -209,7 +209,7 @@ class FoodOn:
         scoring.run_config()
         # scoring.run_analysis()
         scoring.bad_precision()
-        scoring.find_worst_classes()
+        # scoring.find_worst_classes()
         # scoring.find_diff_old_rmv_method()
 
         return

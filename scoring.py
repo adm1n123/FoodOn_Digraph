@@ -73,7 +73,7 @@ class Scoring:
         t2 = time()
         print('Elapsed time for getting entity label vectors %.2f minutes' % ((t2 - t1) / 60))
 
-        self.count_all_words(df_class, df_entity)
+        # self.count_all_words(df_class, df_entity)
 
     def reset_nodes(self):
         for _, node in self.class_dict.items():
@@ -378,47 +378,70 @@ class Scoring:
         if "(" in label:
             self.type_count["("] = self.type_count.get("(", 0) + 1
             label = label.replace(",", "")
-            return self.noun_before(label, "(")
+            head = self.noun_before(label, "(")
+            # print(f'type:( label:{label}, head:{head}')
+            return head
         if " or " in label:
             self.type_count["or"] = self.type_count.get("or", 0) + 1
             label = label.replace(",", "")
             strings = label.split(" or ")
             left = strings[0].strip().split()
             right = strings[1].strip().split()
-            return [left[-1], right[0]]
+            head = [left[-1], right[0]]
+            # print(f'type:or label:{label}, head:{head}')
+            return head
         if " based " in label:
             self.type_count["based"] = self.type_count.get("based", 0) + 1
             label = label.replace(",", "")
-            return self.noun_after(label, " based ")
+            head = self.noun_after(label, " based ")
+            # print(f'type:based label:{label}, head:{head}')
+            return head
         if " packed in " in label:
             self.type_count["packed in"] = self.type_count.get("packed in", 0) + 1
             label = label.replace(",", "")
             label = label.replace("packed in", "packed_in")
-            return self.noun_before(label, " packed_in")
+            head = self.noun_before(label, " packed_in")
+            # print(f'type:packed in label:{label}, head:{head}')
+            return head
         if " with " in label:
             self.type_count["with"] = self.type_count.get("with", 0) + 1
             label = label.replace(",", "")
-            return self.noun_before(label, " with ")
+            head = self.noun_before(label, " with ")
+            # print(f'type:with label:{label}, head:{head}')
+            return head
         if " in " in label:
             self.type_count["in"] = self.type_count.get("in", 0) + 1
             label = label.replace(",", "")
-            return self.noun_before(label, " in ")
-        if " flavoured " in label:
-            self.type_count["flavoured"] = self.type_count.get("flavoured", 0) + 1
-            label = label.replace(",", "")
-            return self.noun_after(label, " flavoured ")
+            head = self.noun_before(label, " in ")
+            # print(f'type:in label:{label}, head:{head}')
+            return head
         if " made from " in label:
             self.type_count["made from"] = self.type_count.get("made from", 0) + 1
             label = label.replace(",", "")
             label = label.replace("made from", "made_from")
-            return self.noun_before(label, " made_from ")
+            head = self.noun_before(label, " made_from ")
+            # print(f'type:made from label:{label}, head:{head}')
+            return head
         if " for " in label:
             self.type_count["for"] = self.type_count.get("for", 0) + 1
             label = label.replace(",", "")
-            return self.noun_before(label, " for ")
+            head = self.noun_before(label, " for ")
+            # print(f'type:for label:{label}, head:{head}')
+            return head
         if "," in label:
             self.type_count[","] = self.type_count.get(",", 0) + 1
-            return self.noun_before(label, ",")
+            head = self.noun_before(label, ",")
+            # print(f'type:, label:{label}, head:{head}')
+            return head
+        # if "food product" in label:
+        #     self.type_count["food product"] = self.type_count.get("food product", 0) + 1
+        #     label = label.replace(",", "")
+        #     label = label.replace("food product", "food_product")
+        #     return self.noun_before(label, " food_product")
+        # if "family" in label:
+        #     self.type_count["family"] = self.type_count.get("family", 0) + 1
+        #     label = label.replace(",", "")
+        #     return self.noun_before(label, " family")
 
         self.type_count["rest"] = self.type_count.get("rest", 0) + 1
 
