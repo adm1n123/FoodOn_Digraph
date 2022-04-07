@@ -160,7 +160,7 @@ class FoodOn:
             else:
                 node.seed_entities = node.all_entities.copy()
             seeds = seeds.union(set(node.seed_entities))
-
+            node.seed_count = len(node.seed_entities)
             if len(node.all_entities) == 0:
                 count += 1
 
@@ -226,6 +226,9 @@ class Class:
         self.Rc = None
         self.Sc = None
         self.seed_entities = [] # seed entities for this class
+        self.best_seeds = []
+        self.worst_count = 1e5
+        self.seed_count = 0
         self.predicted_entities = []    # predicted entities for this class
         self.all_entities = []  # all entities in this class
         self.children = []  # all child subclasses(not entities)

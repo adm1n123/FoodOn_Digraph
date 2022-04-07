@@ -1,4 +1,4 @@
-import math
+import math, random
 
 import tensorflow_hub as hub
 import tensorflow_text as text
@@ -40,6 +40,9 @@ class Scoring:
         self.type_count = {}
         self.precompute_vectors()
 
+        # print('dumping class:entity pair into file')
+        # self.dump_class_entity_pairs(root)
+
     def precompute_vectors(self):
         print('precomputing vectors...', end='')
 
@@ -76,6 +79,8 @@ class Scoring:
         # self.count_all_words(df_class, df_entity)
 
     def reset_nodes(self):
+        seeds = []
+        all = []
         for _, node in self.class_dict.items():
             node.Rc = None
             node.Sc = None
@@ -88,11 +93,15 @@ class Scoring:
             node.pre_proc = False
             node.visited_for = None
 
+            all.extend(node.all_entities)
+            seeds.extend(node.seed_entities)
 
+        self.non_seeds = list(set(all) - set(seeds))
         for _, entity in self.entity_dict.items():
             entity.score = None  # list of all the scores during traversal.
             entity.predicted_class = None
             entity.visited_classes = 0
+
         return None
 
     def print_stats(self):
@@ -114,25 +123,42 @@ class Scoring:
         print('\n\nRunning config α * Lc + (1-α) * seeds,  β * Sc + (1-β) * children(Sc avg)')
         self.print_stats()
 
-        for alpha in [.4]:#[x*.1 for x in range(1, 9)]:
-            for beta in [.6]: #[x*.1 for x in range(2, 9, 2)]:
-                self.reset_nodes()
-                self.alpha = alpha
-                self.beta = beta
-                self.bias = .08
+        for _ in range(20):
+            for alpha in [.4]:#[x*.1 for x in range(1, 9)]:
+                for beta in [.6]: #[x*.1 for x in range(2, 9, 2)]:
+                    self.reset_nodes()
+                    self.alpha = alpha
+                    self.beta = beta
+                    self.bias = .08
 
-                self.precompute_tree_nodes()
-                self.predict_entity()
+                    self.precompute_tree_nodes()
+                    self.predict_entity()
 
-                p = self.calculate_precision()
-                self.find_avg_path_length()
-                prec.append([alpha, beta, p])
-                print(f'alpha: {alpha:.1f}, beta: {beta:.1f}, bias: {self.bias}, prec: {p:.3f}')
-        t2 = time()
-        print('Elapsed time for running config search %.2f minutes' % ((t2 - t1) / 60))
-        prec.sort(key=lambda x: x[2], reverse=True)
-        for p in prec:
-            print(f'alpha: {p[0]:.1f}, beta: {p[1]:.1f}, precision: {p[2]:.3f}')
+                    p = self.calculate_precision()
+                    # self.find_avg_path_length()
+                    prec.append([alpha, beta, p])
+                    print(f'alpha: {alpha:.1f}, beta: {beta:.1f}, bias: {self.bias}, prec: {p:.3f}')
+                    self.take_best_seeds(self.root)
+                    self.sample_seeds(self.root)
+
+
+            t2 = time()
+            print('Elapsed time for running config search %.2f minutes' % ((t2 - t1) / 60))
+            prec.sort(key=lambda x: x[2], reverse=True)
+            for p in prec:
+                print(f'alpha: {p[0]:.1f}, beta: {p[1]:.1f}, precision: {p[2]:.3f}')
+
+        self.assign_best_seeds(self.root)
+        self.reset_nodes()
+        self.precompute_tree_nodes()
+        self.predict_entity()
+
+        p = self.calculate_precision()
+        print(f'Final precision after taking best seeds is:{p}')
+
+        print('printing best seeds for classes')
+        for _, node in self.class_dict.items():
+            print(f'class:{node.raw_label}      Best seeds:{[entity.raw_label for entity in node.seed_entities]}')
 
         return None
 
@@ -144,6 +170,33 @@ class Scoring:
         self.post_order_traversal_avg_Rc(self.root)
         return None
 
+    def take_best_seeds(self, root):
+
+        if len(root.seed_entities) == 0 and len(root.all_entities) != 0:
+            return
+
+        if len(set(root.all_entities) - set(root.predicted_entities)) < root.worst_count:
+            root.worst_count = len(set(root.all_entities) - set(root.predicted_entities))
+            root.best_seeds = root.seed_entities
+
+        root.seed_entities = []
+
+        for child in root.children:
+            self.take_best_seeds(child)
+
+    def sample_seeds(self, root):
+        if len(root.seed_entities) > 0:
+            return
+
+        root.seed_entities = random.sample(root.all_entities, root.seed_count)
+
+        for child in root.children:
+            self.sample_seeds(child)
+
+    def assign_best_seeds(self, root):
+        root.seed_entities = root.best_seeds
+        for child in root.children:
+            self.assign_best_seeds(child)
 
     def post_order_traversal_avg_Rc(self, root):    # find average of all Rc vectors in root subtree.
         if root.pre_proc:   # return because child has many parents.
@@ -232,6 +285,20 @@ class Scoring:
         root.visited_for = entity
         return None
 
+    def dump_class_entity_pairs(self, root):
+        file = open('data/FoodOn/class_entity.txt', 'w', encoding="utf-8")
+        data = set()
+        self.dump_to_file(root, data)
+        for root, entity in data:
+            file.write(f'{root}:{entity}\n')
+        file.close()
+
+    def dump_to_file(self, root, data):
+        for entity in root.all_entities:
+            data.add((root.label, entity.label))
+
+        for child in root.children:
+            self.dump_to_file(child, data)
 
     def traverse_greedy(self, root, entity, max_path_score):    # traverse all children with high score. don't block backtrack.
         if root.visited_for == entity:  # don't visited same node for same entity.
@@ -319,7 +386,7 @@ class Scoring:
         grammar = "NP: {<DT>?<JJ>*<NN>}"
         cp = nltk.RegexpParser(grammar)
         result = cp.parse(nltk.pos_tag(nltk.word_tokenize(label)))
-        # tree = Tree(result)
+        # print(result)
         for np in self.find_noun_phrases(result):
             head = self.find_head_of_np(np)
             if head is not None:
@@ -469,6 +536,7 @@ class Scoring:
         num_found_words = 0
         flag = False
         head = self.find_head(label)
+        self.get_head(p_label)
         # print(f'label: {label}, head: {head}')
         for word, pos in nltk.pos_tag(p_label.split(' ')):
             # if word in ['food', 'product']:
