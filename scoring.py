@@ -98,7 +98,7 @@ class Scoring:
 
         self.non_seeds = list(set(all) - set(seeds))
         for _, entity in self.entity_dict.items():
-            entity.score = None  # list of all the scores during traversal.
+            entity.score = 0  # max score during traversal.
             entity.predicted_class = None
             entity.visited_classes = 0
 
@@ -156,9 +156,9 @@ class Scoring:
         p = self.calculate_precision()
         print(f'Final precision after taking best seeds is:{p}')
 
-        print('printing best seeds for classes')
-        for _, node in self.class_dict.items():
-            print(f'class:{node.raw_label}      Best seeds:{[entity.raw_label for entity in node.seed_entities]}')
+        # print('printing best seeds for classes')
+        # for _, node in self.class_dict.items():
+        #     print(f'class:{node.raw_label}      Best seeds:{[entity.raw_label for entity in node.seed_entities]}')
 
         return None
 
@@ -250,10 +250,11 @@ class Scoring:
         # print('\n Traversing_all_classes_Rc\n')
         print('\nTraversing_greedily all subtree with higher score than parent, predict class using Rc, Traverse subtrees using Sc\n')
         for entity in self.non_seeds:
-            entity.score = -1
+            entity.score = -1e5
             # entity.score_rmv = -1
             # self.traverse_all_Rc(self.root, entity)
-            self.traverse_greedy(self.root, entity, 0)
+
+            self.traverse_greedy(self.root, entity, -1e5)
             visited_classes += entity.visited_classes
             pred_class = entity.predicted_class
 
@@ -885,3 +886,20 @@ class Scoring:
             if not node.all_words:
                 ec += len(node.all_entities)
         print(f'These: {c} classes are responsible for: {ec} entities misclassification')
+
+    def print_test_20(self):
+        f = open('logs/test_20.txt', mode='w', encoding='utf8')
+
+        print(f'################################ Printing 20 failed entities .##########################################\n\n\n')
+        for _, node in self.class_dict.items():
+            failed = set(node.all_entities) - set(node.predicted_entities) - set(node.seed_entities)
+            failed = list(failed)
+            f.write(f'Class: {node.raw_label}    ##############################\n')
+            for entity in failed:
+                score = self._cosine_similarity(node.Rc, entity.Le)
+                label = entity.predicted_class
+                if label is not None:
+                    f.write(f'    {entity.raw_label} # predicted_class: {entity.predicted_class.raw_label} score(class:{score}, pred class: {entity.score})\n')
+                # else: # if entity is non-seed for this class but seed for other class then it will be None.
+                #     f.write(f'    {entity.raw_label} # predicted_class: {None} score{score, None}\n')
+        f.close()

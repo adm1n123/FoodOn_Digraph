@@ -195,10 +195,35 @@ class FoodOn:
         print('seeds %d, Found %d non-seed entities to populate out of %d all entities.' % (len(seeds), len(non_seeds), len(self.all_entities)))
         return digraph_seeded
 
+    def seed_digraph20_test(self):
+        print('Seeding digraph.')
+        seeds = set()
+        count = 0
+
+        for _, node in self.class_dict.items():
+            if len(node.all_entities) <= 10:
+                node.seed_entities = node.all_entities.copy()
+            elif len(node.all_entities) < 30:
+                node.seed_entities = random.sample(node.all_entities, 10)
+            else:
+                node.seed_entities = random.sample(node.all_entities, len(node.all_entities)-20)
+
+            seeds = seeds.union(set(node.seed_entities))
+            node.seed_count = len(node.seed_entities)
+            if len(node.all_entities) == 0:
+                count += 1
+
+        non_seeds = set(self.entity_dict.values()) - seeds
+
+        print(f'Classes without entities: {count}, classes with entities: {len(self.all_classes)-count}')
+        digraph_seeded = (self.class_dict, list(non_seeds))
+        print('seeds %d, Found %d non-seed entities to populate out of %d all entities.' % (len(seeds), len(non_seeds), len(self.all_entities)))
+        return digraph_seeded
 
     def populate_foodon_digraph(self):
 
-        class_dict, non_seed_entities = self.seed_digraph()
+        class_dict, non_seed_entities = self.seed_digraph20_test()
+        # class_dict, non_seed_entities = self.seed_digraph()
 
         scoring = Scoring(
             root=self.digraph_root,
@@ -208,10 +233,10 @@ class FoodOn:
 
         scoring.run_config()
         # scoring.run_analysis()
-        scoring.bad_precision()
+        # scoring.bad_precision()
         # scoring.find_worst_classes()
         # scoring.find_diff_old_rmv_method()
-
+        scoring.print_test_20()
         return
 
 """
@@ -249,7 +274,7 @@ class Entity:
         self.raw_label = None
         self.label = None   # entity label processed
         self.Le = None
-        self.score = None   # list of all the scores during traversal.
+        self.score = 0   # max score during traversal.
         self.predicted_class = None
         self.parents = []  # all parent classes
         self.visited_classes = 0
